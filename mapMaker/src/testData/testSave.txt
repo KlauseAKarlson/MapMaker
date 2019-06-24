@@ -1,0 +1,7 @@
+mapWidth: 2
+mapHeight: 2
+tileSet: 3, 100, 100
+grass, city, forest
+layers: 1
+grass, forest
+grass, city
