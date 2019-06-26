@@ -2,14 +2,18 @@ package mapMaker;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -27,6 +31,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	/**
 	 * main
 	 */
+	
 
 	private JLabel LChosenTile; //shows current tile selected on the Map
 	private JPanel MapHolder;
@@ -34,7 +39,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private TileChooser TSetMenu;
 	private SpinnerNumberModel LayerChooser;
 	private Map ActiveMap;
-	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer;
+	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, BExportToImage;
 	private NewMapDialog DNewMap;
 	private CreateTileDialog DCreateTile;
 	
@@ -61,6 +66,10 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		BImportTile=new JButton("create new Tile");
 		BImportTile.addActionListener(this);
 		fileBox.add(BImportTile);
+		
+		BExportToImage=new JButton("Export Map to Image");
+		BExportToImage.addActionListener(this);
+		fileBox.add(BExportToImage);
 		
 		this.add(fileBox, BorderLayout.NORTH);
 		
@@ -240,6 +249,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 			//create tile from opaque image
 			addTile(DCreateTile.getTileName(),
 					DCreateTile.getTileImage());
+		}else if(e.getSource()==BExportToImage)
+		{
+			exportMapToImage();
 		}
 	}//end actionPerformed(e)
 	public void loadSave()
@@ -300,7 +312,36 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		Map m=new Map(DNewMap.getMapWidth(), DNewMap.getMapHeight(), t);
 		replaceMap(m);
 	}
-
+	public void exportMapToImage()
+	{
+		/**
+		 * allows the user to save a copy of the map as an image file
+		 */
+		JFileChooser chooser = new JFileChooser();
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("png", 
+	    		"png" );//static method provides all image types known by ImageIo
+	    chooser.setFileFilter(filter);
+	    int returnValue=chooser.showSaveDialog(this);
+	    if (returnValue==JFileChooser.APPROVE_OPTION)
+	    {
+	    	File imageFile=chooser.getSelectedFile();
+	    	try {
+	    		BufferedImage mapCopy=new BufferedImage(this.ActiveViewer.getWidth(), ActiveViewer.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	    		Graphics g = mapCopy.getGraphics();
+	    		ActiveViewer.paint(g);
+	    		g.dispose();
+	    		String filePath=imageFile.getAbsolutePath();
+	    		System.out.print(filePath +"\n");
+	    		int extensionStart=filePath.lastIndexOf(".") + 1;
+	    		String fileExtension= filePath.substring(extensionStart);
+	    		boolean iio=ImageIO.write(mapCopy, "png", imageFile);
+	    		System.out.print(iio);
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, e.getMessage(), "File Exception", JOptionPane.ERROR_MESSAGE);
+			}
+	    }
+	}//end export to image
 	
 	public static void main(String[] args) {
 		new MapMaker();
