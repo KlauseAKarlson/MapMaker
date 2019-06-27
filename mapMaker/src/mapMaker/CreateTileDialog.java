@@ -160,6 +160,12 @@ public class CreateTileDialog extends JFrame implements ActionListener {
 	    	try {
 	    		BufferedImage baseImage=ImageIO.read(imageFile);
 	    		TileSet ts=Parent.getMap().getTileSet();
+	    		//produce default tile name 
+	    		String imagePath=imageFile.getAbsolutePath();
+	    		int nameStart=imagePath.lastIndexOf(File.separator);
+	    		int nameEnd=imagePath.lastIndexOf(".");
+	    		this.TFTileName.setText(imagePath.substring(nameStart, nameEnd));
+	    		
 	    		this.IOpaque=ts.resizeImage(baseImage);
 	    		this.BOpaque.setIcon(new ImageIcon(this.IOpaque));
 	    		this.ITransparent=ts.ResizeAndTransparent(baseImage);

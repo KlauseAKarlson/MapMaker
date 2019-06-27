@@ -1,20 +1,20 @@
 package mapMaker;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -39,7 +39,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private TileChooser TSetMenu;
 	private SpinnerNumberModel LayerChooser;
 	private Map ActiveMap;
-	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, BExportToImage;
+	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, 
+		BExportToImage, BPrint;
+	private JCheckBox BAutoReplace;
 	private NewMapDialog DNewMap;
 	private CreateTileDialog DCreateTile;
 	
@@ -71,6 +73,10 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		BExportToImage.addActionListener(this);
 		fileBox.add(BExportToImage);
 		
+		BPrint=new JButton("Print Map");
+		BPrint.addActionListener(this);
+		fileBox.add(BPrint);
+		
 		this.add(fileBox, BorderLayout.NORTH);
 		
 		//create sidepanel wtih map editing tools
@@ -89,7 +95,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		DCreateTile=new CreateTileDialog(this);
 		DCreateTile.addActionListener(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		pack();
+		this.setSize(1000, 600);
 		this.setVisible(true);
 		
 	}//end CTOR
@@ -100,6 +106,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		//show tile currently chosen on map
 		sidePanel.add(new JLabel("Current Tile"));
 		LChosenTile=new JLabel();
+		LChosenTile.setAlignmentX(CENTER_ALIGNMENT);
 		sidePanel.add(LChosenTile);
 
 		//allow user to select layer, and add or remove layers
@@ -121,12 +128,19 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		sidePanel.add(layerBox);
 		
 		//provide user with a tool to replace tiles
+		Box replaceBox=Box.createHorizontalBox();
+		BAutoReplace=new JCheckBox("<html>Auto Replace<br> on Click</html>");
+		//BAuto replace does not need an action listner becuase we will be checking its value when ActiveViewer is clicked instead
+		replaceBox.add(BAutoReplace);
 		BReplaceTile=new JButton("ReplaceTile");
 		BReplaceTile.setIcon(ActiveMap.getTileSet().getTile("Empty").getIcon());//gets empty tile is always available
 		BReplaceTile.setVerticalTextPosition(AbstractButton.TOP);
 		BReplaceTile.setHorizontalTextPosition(AbstractButton.CENTER);
 		BReplaceTile.addActionListener(this);
-		sidePanel.add(BReplaceTile);
+		replaceBox.add(BReplaceTile);
+		sidePanel.add(replaceBox);
+		
+		
 		TSetMenu=new TileChooser(ActiveMap.getTileSet());
 		TSetMenu.addActionListener(this);
 		sidePanel.add(TSetMenu);
@@ -217,6 +231,10 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		if (e.getSource()==ActiveViewer)
 		{
 			updateChosenTile();
+			if (BAutoReplace.isSelected())
+			{
+				replaceTile();
+			}
 		}else if(e.getSource()==TSetMenu)
 		{
 			updateReplaceTile();
@@ -252,6 +270,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		}else if(e.getSource()==BExportToImage)
 		{
 			exportMapToImage();
+		}else if(e.getSource()==BPrint)
+		{
+			printMap();
 		}
 	}//end actionPerformed(e)
 	public void loadSave()
@@ -282,7 +303,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * provides user save dialogue and saves file
 		 */
 		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Plain Text",
 	            "txt");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showSaveDialog(this);
@@ -342,6 +363,24 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 			}
 	    }
 	}//end export to image
+	public void printMap()
+	{
+		/**
+		 * calls up ui to print map
+		 */
+		PrinterJob job = PrinterJob.getPrinterJob();
+		job.setPageable(ActiveViewer);
+        boolean ok = job.printDialog();
+        if (ok) {// user may cancel
+            try {
+                 job.print();
+            } catch (PrinterException e) {
+            	//something went wrong, let the user know
+            	e.printStackTrace();
+            	JOptionPane.showMessageDialog(this, e.getMessage(), "Printing Error", JOptionPane.ERROR_MESSAGE);
+            }//end catch
+        }//else do nothing because the user canceled
+	}//print 
 	
 	public static void main(String[] args) {
 		new MapMaker();

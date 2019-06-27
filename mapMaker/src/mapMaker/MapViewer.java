@@ -1,16 +1,17 @@
 package mapMaker;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.*;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
-public class MapViewer extends JPanel implements ActionListener{
+public class MapViewer extends JPanel implements ActionListener, Printable, Pageable{
 
 	private Map ActiveMap;
 	private int selectedColumn=0, selectedRow=0;
@@ -110,6 +111,99 @@ public class MapViewer extends JPanel implements ActionListener{
 			return ActiveMap.getTileSet().getHeight();
 		}
 		
+	}
+
+	@Override
+	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
+		/**
+		 * generates pages of a printed map, page order is by column then row if the map requires more than one page
+		 */
+		//first calculate tiles per page, and then the number of pages needed to print the whole map
+		TileSet tset=ActiveMap.getTileSet();
+		int tileWidth=tset.getWidth()+2;//tile width modified to include border
+		int tileHeight=tset.getHeight()+2; 
+		
+		int pageWidthTiles=( (int) pf.getImageableWidth() )/(tileWidth);//page width in tiles
+		int pageHeightTiles=( (int) pf.getImageableHeight() )/(tileHeight);
+
+		int pagesWide=ActiveMap.getWidth()/pageWidthTiles;//how many pages wide the map is
+		if (ActiveMap.getWidth()%pageWidthTiles>0) 
+			pagesWide++;
+
+		int pagesTall=ActiveMap.getHeight()/pageHeightTiles;//how many pages tall the map is
+		if (ActiveMap.getHeight()%pageHeightTiles>0) 
+			pagesTall++;
+		int totalPages=pagesWide*pagesTall;
+		//check if pave exists
+		if (pageIndex>=totalPages)
+		{
+			return Printable.NO_SUCH_PAGE;//tell caller the page they asked for does not exist
+		}else {
+			//calculate page column and row
+			int pageColumn=pageIndex%pagesWide;
+			int pageRow=pageIndex/pagesWide;
+			//calculate boundry indexes of tiles being printed
+			int firstColumn=pageColumn*pageWidthTiles;
+			int lastColumn=ActiveMap.getWidth()%pageWidthTiles;//is the last column relative to first column, rather than absolute, to simplify math later
+			if (pageColumn==pagesWide-1)
+			{
+				lastColumn=ActiveMap.getWidth()%pageWidthTiles;
+			}else {
+				lastColumn=pageWidthTiles;
+			}
+			int firstRow=pageRow*pageHeightTiles;
+			int lastRow;//relative to first collumn, rather than absolute, to simplify math laters
+			if (pageRow==pagesTall-1)
+			{
+				lastRow=ActiveMap.getHeight()%pageHeightTiles;
+			}else {
+				lastRow=pageHeightTiles;
+			}
+			//fill in black background to create borders
+		    Graphics2D g2d = (Graphics2D)g;
+		    g2d.translate(pf.getImageableX(), pf.getImageableY());
+			g2d.setColor(Color.BLACK);
+			g2d.fillRect(0, 0, (lastColumn*tileWidth), (lastRow*tileHeight) );
+			//paint tiles onto page
+			for (int row=0;row<lastRow;row++)
+			{
+				for (int col=0;col<lastColumn;col++)
+				{
+					//col and row are offsets from fist column and first row
+					ActiveMap.paintTileAt(firstColumn+col, firstRow+row, //tile location on map
+							1+col*tileWidth, 1+row*tileHeight, null, g2d);//paint location
+				}//end column loop
+			}//end row loop
+			//print tiles
+			return Printable.PAGE_EXISTS;//tell caller this page is part of the document and is done
+		}//end if page exists
+	}//end Printable.print
+	@Override
+	public int getNumberOfPages() {
+		TileSet tset=ActiveMap.getTileSet();
+		PageFormat pf=PrinterJob.getPrinterJob().defaultPage();
+		int tileWidth=tset.getWidth()+2;//tile width modified to include border
+		int tileHeight=tset.getHeight()+2; 
+		
+		int pageWidthTiles=( (int) pf.getImageableWidth() )/(tileWidth);//page width in tiles
+		int pageHeightTiles=( (int) pf.getImageableHeight() )/(tileHeight);
+
+		int pagesWide=ActiveMap.getWidth()/pageWidthTiles;//how many pages wide the map is
+		if (ActiveMap.getWidth()%pageWidthTiles>0) 
+			pagesWide++;
+
+		int pagesTall=ActiveMap.getHeight()/pageHeightTiles;//how many pages tall the map is
+		if (ActiveMap.getHeight()%pageHeightTiles>0) 
+			pagesTall++;
+		return pagesWide*pagesTall;
+	}
+	@Override
+	public PageFormat getPageFormat(int pageIndex) throws IndexOutOfBoundsException {
+		return PrinterJob.getPrinterJob().defaultPage();
+	}
+	@Override
+	public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
+		return this;
 	}
 	
 }//end map viewer class

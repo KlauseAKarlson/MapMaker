@@ -21,10 +21,10 @@ public class NewMapDialog extends JFrame implements ActionListener {
 		super("New Map");
 		Parent=m;
 		//initialize spinner number models
-		MapWidth=new SpinnerNumberModel(10, 5,500, 1);
-		MapHeight=new SpinnerNumberModel(10, 5,500, 1);
-		TileWidth=new SpinnerNumberModel(100, 50, 400, 10);
-		TileHeight=new SpinnerNumberModel(100, 50, 400, 10);
+		MapWidth=new SpinnerNumberModel(10, 5, 500, 1);
+		MapHeight=new SpinnerNumberModel(10, 5, 500, 1);
+		TileWidth=new SpinnerNumberModel(72, 15, 400, 10);
+		TileHeight=new SpinnerNumberModel(72, 15, 400, 10);
 		//initialize ui
 		getContentPane().setLayout(
 			    new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));

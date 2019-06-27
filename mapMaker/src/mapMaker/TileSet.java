@@ -1,24 +1,13 @@
 package mapMaker;
 
-import java.util.Arrays;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
-
-import javax.swing.ImageIcon;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import java.awt.image.LookupOp;
-import java.awt.image.LookupTable;
-import java.awt.image.RGBImageFilter;
 import java.io.File;
 import java.io.IOException;
  
@@ -32,7 +21,7 @@ import javax.imageio.ImageIO;
  */
 public class TileSet {
 	private Hashtable<String,Tile> tiles;
-	private int tileWidth=100, tileHeight=100;//width and height of tiles in pixels
+	private int tileWidth=72, tileHeight=72;//width and height of tiles in pixels
 	public TileSet(int tWidth, int tHeight)
 	{
 		/**
@@ -206,10 +195,16 @@ public class TileSet {
 	}//end createTile
 	public int getWidth()
 	{
+		/**
+		 * tile width in pixels
+		 */
 		return this.tileWidth;
 	}
 	public int getHeight()
 	{
+		/**
+		 * tile height in pixels
+		 */
 		return this.tileHeight;
 	}
 	public boolean validTileName(String name)

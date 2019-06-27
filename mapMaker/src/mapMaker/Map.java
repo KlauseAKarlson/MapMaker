@@ -22,7 +22,7 @@ public class Map {
 		Layer background=new Layer();
 		//unknown or null tiles are treated as empty spaces as a fail safe design
 		mapLayers.add(background);
-		mapTileSet=new TileSet(100,100);//use default size for now
+		mapTileSet=new TileSet(72,72);//default size is one inch under default print format
 	}//end constructor
 	public Map(int width, int height, TileSet t)
 	{
@@ -128,7 +128,7 @@ public class Map {
 		 * saves map as a text document
 		 */
 		if(!saveFile.endsWith("txt"))//make sure the save file is a text file
-			throw new IOException("Wrong file format");
+			saveFile+=".txt";
 		File saveLocation=new File(saveFile);
 		FileWriter saveWriter=new FileWriter(saveLocation);
 		//write header
@@ -242,7 +242,7 @@ public class Map {
 		if (tileX<0 || tileX>=mapWidth 
 				|| tileY<0 || tileY>=mapHeight)
 		{
-			throw new IndexOutOfBoundsException("Tile outside fo map");
+			throw new IndexOutOfBoundsException("Tile outside fo map, x"+tileX+"y"+tileY);
 		}
 		Tile[] tiles=getTiles(tileX,tileY);
 		for (Tile t:tiles)
