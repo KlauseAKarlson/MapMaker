@@ -51,29 +51,7 @@ public class SquareTileSet extends TileSet{
 		}
 		return saveString;
 	}//end to string
-	public void saveFresh(String saveDirectory) throws IOException
-	{
-		/**
-		 * saves any fresh (newly created) tiles in provided save directory 
-		 */
-		Enumeration<Tile> tileEnum=this.tiles.elements();
-		Tile currentTile;
-		while(tileEnum.hasMoreElements())
-		{
-			currentTile=tileEnum.nextElement();
-			if (currentTile.isFresh())
-			{
-				//get the java.awt.image from that imageicon being used as the image for the tile
-				Image tileImage=currentTile.getImage();
 
-				BufferedImage bi = new BufferedImage(this.tileWidth,this.tileHeight,BufferedImage.TYPE_INT_ARGB);
-				Graphics2D g2 = bi.createGraphics();
-				g2.drawImage(tileImage, 0, 0, null);
-				g2.dispose();
-				ImageIO.write(bi, "png", new File(saveDirectory+File.separator+currentTile.getName()+".png"));//save using image name
-			}//else do nothing
-		}//end while loop
-	}//end saveFreshc
 	
 	public BufferedImage resizeImage(BufferedImage i)
 	{
@@ -162,20 +140,12 @@ public class SquareTileSet extends TileSet{
 				//if correct width and height, go ahead and create tile
 				newTile = new Tile(tileName, inputImage, freshTile);
 			}else {
-				//resize image and create tile, rsImage=Re-Sized Image
-				BufferedImage rsImage=new BufferedImage(tileWidth, tileHeight, inputImage.getType());
-				Graphics2D g2d = rsImage.createGraphics();
-				g2d.drawImage(inputImage, 0, 0, tileWidth, tileHeight, null);
-				g2d.dispose();
+				BufferedImage rsImage=resizeImage(inputImage);
 				newTile= new Tile(tileName, rsImage, true);
 			}
 			tiles.put(tileName, newTile);
 
-		}
-		else//prevent tile creation for reserved name
-		{
-
-		}
+		}//else do nothing, prevent tile creation for reserved name
 			
 	}//end createTile
 

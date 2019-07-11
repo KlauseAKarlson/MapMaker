@@ -25,11 +25,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PrintTest extends JFrame implements ChangeListener {
 
-	private SquareMapViewer ActiveViewer;
+	private MapViewer ActiveViewer;
 	private SpinnerNumberModel PageChooser;
 	private TestPaper testPage;
 	
-	public PrintTest(SquareMapViewer viewer)
+	public PrintTest(MapViewer viewer)
 	{
 		super("Print Test");
 		//create UI
@@ -81,7 +81,7 @@ public class PrintTest extends JFrame implements ChangeListener {
 
 				
 				//create print test JFramec
-				SquareMapViewer viewer=new SquareMapViewer(saveMap);
+				MapViewer viewer=new SquareMapViewer(saveMap);
 				new PrintTest(viewer);
 				//
 			} catch (IOException e) {

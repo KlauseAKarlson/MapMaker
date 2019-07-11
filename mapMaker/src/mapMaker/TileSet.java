@@ -2,10 +2,15 @@ package mapMaker;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 public abstract class TileSet {
 
@@ -27,10 +32,31 @@ public abstract class TileSet {
 		Tile empty= new Tile("Empty", blank, true);
 		tiles.put("Empty", empty);
 	}
-	
 	public abstract String toString();
 	
-	public abstract void saveFresh(String saveDirectory) throws IOException;
+	public void saveFresh(String saveDirectory) throws IOException
+	{
+		/**
+		 * saves any fresh (newly created) tiles in provided save directory 
+		 */
+		Enumeration<Tile> tileEnum=this.tiles.elements();
+		Tile currentTile;
+		while(tileEnum.hasMoreElements())
+		{
+			currentTile=tileEnum.nextElement();
+			if (currentTile.isFresh())
+			{
+				//get the java.awt.image from that imageicon being used as the image for the tile
+				Image tileImage=currentTile.getImage();
+
+				BufferedImage bi = new BufferedImage(this.tileWidth,this.tileHeight,BufferedImage.TYPE_INT_ARGB);
+				Graphics2D g2 = bi.createGraphics();
+				g2.drawImage(tileImage, 0, 0, null);
+				g2.dispose();
+				ImageIO.write(bi, "png", new File(saveDirectory+File.separator+currentTile.getName()+".png"));//save using image name
+			}//else do nothing
+		}//end while loop
+	}//end saveFresh
 	
 	public abstract  void createTile(String tileName, BufferedImage i);
 	

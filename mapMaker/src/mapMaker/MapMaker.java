@@ -351,10 +351,6 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	    		Graphics g = mapCopy.getGraphics();
 	    		ActiveViewer.paint(g);
 	    		g.dispose();
-	    		String filePath=imageFile.getAbsolutePath();
-	    		System.out.print(filePath +"\n");
-	    		int extensionStart=filePath.lastIndexOf(".") + 1;
-	    		String fileExtension= filePath.substring(extensionStart);
 	    		boolean iio=ImageIO.write(mapCopy, "png", imageFile);
 	    		System.out.print(iio);
 			} catch (IOException e) {
