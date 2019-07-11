@@ -1,19 +1,29 @@
 package mapMaker;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 
-public class HexMapViewer extends MapViewer {
+public class HexMapViewer extends MapViewer implements MouseListener {
 
 	private HexMap ActiveMap;
 	private HexTileSet TSet;
 	public HexMapViewer(HexMap m) {
-		// TODO Auto-generated constructor stub
 		super();
 		ActiveMap=m;
 		TSet=(HexTileSet)m.getTileSet();
+		this.setPreferredSize(
+				new Dimension(ActiveMap.getWidth()*TSet.getWidth(),
+						(ActiveMap.getHeight()*TSet.getHeight()*3+1)/4) 
+				);
 	}
 
 	public int ColumnAt(int x, int y)
@@ -96,26 +106,101 @@ public class HexMapViewer extends MapViewer {
 	
 	@Override
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+		//I'm just cutting off the tiles at the edge of the page
+		int PMapWidth=ActiveMap.getWidth()*TSet.getWidth();//mapHeight in pixels
+		int PMapHeight=(ActiveMap.getHeight()*TSet.getHeight()*3+1)/4;
+		//determin the number of pages wide and tall
+		int pagesWide=(int)pageFormat.getImageableWidth()/PMapWidth;
+		if ((int)pageFormat.getImageableWidth()%PMapWidth !=0)
+			pagesWide++;
+		int pagesTall=(int)pageFormat.getImageableHeight()/PMapHeight;
+		if ((int)pageFormat.getImageableHeight()%PMapHeight !=0)
+			pagesTall++;
+		int totalPages=pagesWide*pagesTall;
+		//check if pave exists
+		if (pageIndex>=totalPages)
+		{
+			return Printable.NO_SUCH_PAGE;//tell caller the page they asked for does not exist
+		}else {
+			int pageCol=pageIndex%pagesWide;
+			int pageRow=pageIndex/pagesWide;
+    		BufferedImage mapCopy=new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+    		Graphics g = mapCopy.getGraphics();
+    		paint(g);
+    		g.dispose();
+    		BufferedImage subMap=mapCopy.getSubimage((int)pageFormat.getImageableWidth()*pageCol, 
+    				(int)pageFormat.getImageableHeight()*pageRow, 
+    				(int)pageFormat.getImageableWidth(), 
+    				(int)pageFormat.getImageableHeight());
+			graphics.drawImage(subMap, (int)pageFormat.getImageableX(), (int)pageFormat.getImageableY(), null);
+			return Printable.PAGE_EXISTS;
+		}
+
+	}//end print 
 
 	@Override
 	public int getNumberOfPages() {
-		// TODO Auto-generated method stub
-		return 0;
+		PageFormat pageFormat=PrinterJob.getPrinterJob().defaultPage();
+		int PMapWidth=ActiveMap.getWidth()*TSet.getWidth();//mapHeight in pixels
+		int PMapHeight=(ActiveMap.getHeight()*TSet.getHeight()*3+1)/4;
+		//determin the number of pages wide and tall
+		int PagesWide=(int)pageFormat.getImageableWidth()/PMapWidth;
+		if ((int)pageFormat.getImageableWidth()%PMapWidth !=0)
+			PagesWide++;
+		int PagesTall=(int)pageFormat.getImageableHeight()/PMapHeight;
+		if ((int)pageFormat.getImageableHeight()%PMapHeight !=0)
+			PagesTall++;
+		return PagesWide*PagesTall;
 	}
 
 	@Override
 	public PageFormat getPageFormat(int pageIndex) throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		return PrinterJob.getPrinterJob().defaultPage();
 	}
 
 	@Override
 	public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		//identify selected tile and report to action listener
+		int x=e.getX();
+		int y=e.getY();
+		this.selectedColumn=this.ColumnAt(x, y);
+		this.selectedRow=this.RowAt(x, y);
+		if (!Listeners.isEmpty())
+		{
+			ActionEvent e2=new ActionEvent(this,ActionEvent.ACTION_FIRST ,x+","+y);
+			for (ActionListener l:Listeners)
+			{
+				l.actionPerformed(e2);
+			}
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		//do nothing
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		//do nothing		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		//do nothing
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		//do nothing
+		
 	}
 
 }

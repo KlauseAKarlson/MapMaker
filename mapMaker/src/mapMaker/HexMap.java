@@ -47,7 +47,6 @@ public class HexMap extends Map {
 		//create tileset
 		currentLine=saveReader.readLine();
 		//start and end are substring indexes
-		//TODO move into TileSet for ecapsulation
 		int start=currentLine.indexOf(": ")+2;//read multiple substrings from each line from now on
 		int end=currentLine.indexOf(",");
 		//numberString=currentLine.substring(start, end);//not used
@@ -173,8 +172,7 @@ public class HexMap extends Map {
 
 	@Override
 	public MapViewer getMapViewer() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HexMapViewer(this);
 	}
 
 }
