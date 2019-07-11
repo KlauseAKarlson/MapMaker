@@ -72,16 +72,16 @@ public class PrintTest extends JFrame implements ChangeListener {
 	            "txt");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showOpenDialog(null);
-	    SquareMap saveMap;
+	    Map saveMap;
 	    if (returnValue==JFileChooser.APPROVE_OPTION)
 	    {
 	    	File save=chooser.getSelectedFile();
 	    	try {
-				saveMap=SquareMap.createSquareMap(save.getAbsolutePath());
+				saveMap=Map.loadMap(save.getAbsolutePath());
 
 				
 				//create print test JFramec
-				MapViewer viewer=new SquareMapViewer(saveMap);
+				MapViewer viewer=saveMap.getMapViewer();
 				new PrintTest(viewer);
 				//
 			} catch (IOException e) {

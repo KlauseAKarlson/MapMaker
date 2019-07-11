@@ -38,7 +38,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private MapViewer ActiveViewer;
 	private TileChooser TSetMenu;
 	private SpinnerNumberModel LayerChooser;
-	private SquareMap ActiveMap;
+	private Map ActiveMap;
 	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, 
 		BExportToImage, BPrint;
 	private JCheckBox BAutoReplace;
@@ -146,7 +146,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		sidePanel.add(TSetMenu);
 		this.add(sidePanel, BorderLayout.EAST);
 	}
-	public void replaceMap(SquareMap m)
+	public void replaceMap(Map m)
 	{
 		//replaces the map being edited with Map m
 		ActiveMap=m;
@@ -206,7 +206,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		updateChosenTile();
 		ActiveViewer.repaint();
 	}//end replace tile
-	public SquareMap getMap()
+	public Map getMap()
 	{
 		return ActiveMap;
 	}
@@ -289,7 +289,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	    {
 	    	File save=chooser.getSelectedFile();
 	    	try {
-				SquareMap saveMap= SquareMap.createSquareMap(save.getAbsolutePath());
+				Map saveMap= Map.loadMap(save.getAbsolutePath());
 				replaceMap(saveMap);
 			} catch (IOException e) {
 				e.printStackTrace();

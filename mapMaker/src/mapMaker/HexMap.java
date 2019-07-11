@@ -1,4 +1,5 @@
 package mapMaker;
+
 import java.awt.Component;
 import java.awt.Graphics;
 import java.io.BufferedReader;
@@ -7,28 +8,27 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-public class SquareMap extends Map{
 
+import mapMaker.Map.Layer;
 
-	private SquareTileSet mapTileSet;
+public class HexMap extends Map {
+
+	private HexTileSet mapTileSet;
 	
-	public SquareMap(int width, int height)
+	public HexMap(int width, int height)
 	{
 		/**
 		 * creates a new blank map with desired height and width
 		 */
 		super(width,height);
-		mapTileSet=new SquareTileSet(72,72);//default size is one inch under default print format
+		mapTileSet=new HexTileSet(36);//default size is one inch under default print format
 	}//end constructor
-	public SquareMap(int width, int height, SquareTileSet t)
+	public HexMap(int width, int height, HexTileSet t)
 	{
-		/**
-		 * creates a new blank map with desired height and width
-		 */
 		super(width,height);
-		mapTileSet=t;//use default size for now
-	}//end constructor
-	public static SquareMap loadSquareMap(BufferedReader saveReader, File saveFile) throws IOException
+		mapTileSet=t;
+	}
+	public static HexMap loadHexMap(BufferedReader saveReader, File saveFile) throws IOException
 	{
 		/**
 		 * creates a map based on a text based save file
@@ -42,7 +42,7 @@ public class SquareMap extends Map{
 		currentLine=saveReader.readLine();
 		numberString=currentLine.substring(currentLine.indexOf(": ")+2);
 		int mapHeight=Integer.valueOf(numberString);//convert to int
-		SquareMap newMap= new SquareMap(mapWidth,mapHeight);
+		HexMap newMap= new HexMap(mapWidth,mapHeight);
 		
 		//create tileset
 		currentLine=saveReader.readLine();
@@ -59,7 +59,7 @@ public class SquareMap extends Map{
 		start=end+2;//get next substring
 		numberString=currentLine.substring(start);//last number expected on this line
 		int tileHeight=Integer.valueOf(numberString);
-		newMap.mapTileSet=new SquareTileSet(tileWidth, tileHeight);
+		newMap.mapTileSet=new HexTileSet(tileWidth, tileHeight);
 		//load tiles
 		currentLine=saveReader.readLine();
 		start=0;
@@ -111,10 +111,9 @@ public class SquareMap extends Map{
 		//close
 		saveReader.close();
 		return newMap;
-	}//end constructor from save file
-	
-	public void saveMap(String saveFile) throws IOException
-	{
+	}
+	@Override
+	public void saveMap(String saveFile) throws IOException {
 		/**
 		 * saves map as a text document
 		 */
@@ -123,7 +122,7 @@ public class SquareMap extends Map{
 		File saveLocation=new File(saveFile);
 		FileWriter saveWriter=new FileWriter(saveLocation);
 		//write header
-		saveWriter.write("SquareMap");
+		saveWriter.write("HexMap\n");
 		saveWriter.write("mapWidth: "+this.mapWidth+"\n");
 		saveWriter.write("mapHeight: "+this.mapHeight+"\n");
 		//write tileset
@@ -164,17 +163,18 @@ public class SquareMap extends Map{
 			}//end y (height) loop
 		}//end layers loop
 		saveWriter.close();
-	}//end save map
-	
-	public SquareTileSet getTileSet()
-	{
+	}
+
+	@Override
+	public TileSet getTileSet() {
 		return mapTileSet;
-	}//end get tile set
-	
+	}
+
 
 	@Override
 	public MapViewer getMapViewer() {
-		return new SquareMapViewer(this);
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
-}//end map class
+
+}

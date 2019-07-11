@@ -159,7 +159,7 @@ public class CreateTileDialog extends JFrame implements ActionListener {
 	    	File imageFile=chooser.getSelectedFile();
 	    	try {
 	    		BufferedImage baseImage=ImageIO.read(imageFile);
-	    		SquareTileSet ts=Parent.getMap().getTileSet();
+	    		TileSet ts=Parent.getMap().getTileSet();
 	    		//produce default tile name 
 	    		String imagePath=imageFile.getAbsolutePath();
 	    		int nameStart=imagePath.lastIndexOf(File.separator);

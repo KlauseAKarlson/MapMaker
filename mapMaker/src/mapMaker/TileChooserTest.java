@@ -13,8 +13,8 @@ import javax.swing.JLabel;
 public class TileChooserTest extends JFrame implements ActionListener{
 
 	private JLabel Message; 
-	private SquareTileSet Tiles;
-	public TileChooserTest(SquareTileSet T)
+	private TileSet Tiles;
+	public TileChooserTest(TileSet T)
 	{
 		super("Testing");
 		this.setLayout(new BorderLayout());
@@ -36,8 +36,8 @@ public class TileChooserTest extends JFrame implements ActionListener{
 		//System.out.print(localPath+"\n");//debug
 		String testSave=localPath+File.separator+"src"+File.separator+"testData"+File.separator+"testSave.txt";//file of test data
 		try {
-			SquareMap testMap=SquareMap.createSquareMap(testSave);
-			SquareTileSet t=testMap.getTileSet();
+			Map testMap=Map.loadMap(testSave);
+			TileSet t=testMap.getTileSet();
 			new TileChooserTest(t);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

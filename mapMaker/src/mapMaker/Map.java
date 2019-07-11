@@ -2,6 +2,9 @@ package mapMaker;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -14,6 +17,31 @@ public abstract class Map {
 	protected int mapWidth;
 	protected int mapHeight;
 	protected LinkedList<Layer> mapLayers;
+	public static final String hexMap="HexMap",squareMap="SquareMap";
+	
+	public static Map loadMap(String saveLocation) throws IOException
+	{
+		/**
+		 * functions as a factory method for loading maps from saved files
+		 * 
+		 */
+		//evaluate and open file
+		if(!saveLocation.endsWith("txt"))//make sure the save file is a text file
+			throw new IOException("Wrong file format");
+		File saveFile=new File(saveLocation);
+		BufferedReader saveReader=new BufferedReader(new FileReader(saveFile));
+		String mapType=saveReader.readLine();
+		switch (mapType)
+		{
+			case hexMap:
+				return HexMap.loadHexMap(saveReader, saveFile);
+			case squareMap:
+				return SquareMap.loadSquareMap(saveReader, saveFile);
+			
+			default:
+				throw new IOException("Map Type not recognized");
+		}
+	}//end load map
 	
 	public Map(int width, int height)
 	{
@@ -70,8 +98,6 @@ public abstract class Map {
 		return tileStack;
 	}//end getTiles
 	
-	public abstract void paintTileAt(int tileX, int tileY, int pixelX, int pixelY, Component c, Graphics g);
-	
 	public void replaceTile(int x, int y, int layerNumber, String tileName)
 	{
 		/**
@@ -111,6 +137,27 @@ public abstract class Map {
 	/**
 	 * produces a map viewer that shows this map.
 	 */;
+	
+	public void paintTileAt(int tileX, int tileY, int pixelX, int pixelY, Component c, Graphics g)
+	{
+		/**
+		 * paints tiles from bottom to top
+		 * the first two values are the location of the desired tiles on the map
+		 * the second two values are the locations of where the tiles will be painted on the desired component
+		 */
+		if (tileX<0 || tileX>=mapWidth 
+				|| tileY<0 || tileY>=mapHeight)
+		{
+			throw new IndexOutOfBoundsException("Tile outside fo map, x"+tileX+"y"+tileY);
+		}
+		Tile[] tiles=getTiles(tileX,tileY);
+		for (Tile t:tiles)
+		{
+			if (t != null)
+				t.paintIcon(c, g, pixelX, pixelY);
+			//nulls are treated as blank spaces
+		}
+	}//end paint tiles at 
 	
 	public void newLayer()
 	{

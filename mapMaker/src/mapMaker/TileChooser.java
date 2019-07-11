@@ -14,12 +14,12 @@ public class TileChooser extends JScrollPane implements ActionListener{
 	 * this is a UI for choosing tiles from a TileSet
 	 * it can be assigned action listeners which will be called each time a new tile is chosen
 	 */
-	private SquareTileSet KnownTiles;
+	private TileSet KnownTiles;
 	private JPanel optionBox;
 	private String chostenTile="Empty";
 	private List<ActionListener> Listeners;
 	
-	public TileChooser(SquareTileSet t)
+	public TileChooser(TileSet t)
 	{
 		super();
 		Listeners=new LinkedList<ActionListener> ();
@@ -29,7 +29,7 @@ public class TileChooser extends JScrollPane implements ActionListener{
 	}
 	
 		
-	public void updateTileSet(SquareTileSet t)
+	public void updateTileSet(TileSet t)
 	{
 		KnownTiles=t;
 		updateTiles();

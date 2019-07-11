@@ -13,10 +13,10 @@ import javax.swing.JScrollPane;
 
 public class MapViewerTest extends JFrame implements ActionListener{
 
-	private SquareMap activeMap;
-	private SquareMapViewer activeViewer;
+	private Map activeMap;
+	private MapViewer activeViewer;
 	private JLabel message;
-	public MapViewerTest(SquareMap m)
+	public MapViewerTest(Map m)
 	{
 		super("Testing");
 		this.setLayout(new BorderLayout());
@@ -25,7 +25,7 @@ public class MapViewerTest extends JFrame implements ActionListener{
 				activeMap.getTileSet().getEmpty(),
 				JLabel.CENTER);
 		this.add(message, BorderLayout.NORTH);
-		activeViewer=new SquareMapViewer(activeMap);
+		activeViewer=activeMap.getMapViewer();
 		activeViewer.addActionListener(this);
 		JPanel viewerPane=new JPanel();
 		
@@ -43,7 +43,7 @@ public class MapViewerTest extends JFrame implements ActionListener{
 		//System.out.print(localPath+"\n");//debug
 		String testSave=localPath+File.separator+"src"+File.separator+"testData"+File.separator+"testSave.txt";//file of test data
 		try {
-			SquareMap testMap=SquareMap.createSquareMap(testSave);
+			Map testMap=Map.loadMap(testSave);
 			new  MapViewerTest(testMap);
 		} catch (IOException e) {
 			e.printStackTrace();
