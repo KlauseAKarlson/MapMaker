@@ -51,14 +51,14 @@ public class CreateTileDialog extends JFrame implements ActionListener {
 		BTransparent=new JButton("Create Transparent Tile");
 		BTransparent.setVerticalTextPosition(AbstractButton.TOP);
 		BTransparent.setHorizontalTextPosition(AbstractButton.CENTER);
-		BTransparent.setIcon(parent.getMap().getTileSet().getTile("Empty").getIcon());
+		BTransparent.setIcon(parent.getMap().getTileSet().getEmpty() );
 		BTransparent.addActionListener(this);
 		BTransparent.addActionListener(parent);
 		b.add(BTransparent);
 		BOpaque=new JButton("Create Opaque Tile");
 		BOpaque.setVerticalTextPosition(AbstractButton.TOP);
 		BOpaque.setHorizontalTextPosition(AbstractButton.CENTER);
-		BOpaque.setIcon(parent.getMap().getTileSet().getTile("Empty").getIcon());
+		BOpaque.setIcon(parent.getMap().getTileSet().getEmpty() );
 		BOpaque.addActionListener(this);
 		BOpaque.addActionListener(parent);
 		b.add(BOpaque);
@@ -92,8 +92,8 @@ public class CreateTileDialog extends JFrame implements ActionListener {
 		if (b)
 		{
 			this.BChooseImage.setText("Choose a file\n");
-			BTransparent.setIcon(Parent.getMap().getTileSet().getTile("Empty").getIcon());
-			BOpaque.setIcon(Parent.getMap().getTileSet().getTile("Empty").getIcon());
+			BTransparent.setIcon(Parent.getMap().getTileSet().getEmpty() );
+			BOpaque.setIcon(Parent.getMap().getTileSet().getEmpty() );
 			this.TFTileName.setText("");
 			this.pack();
 		}
@@ -159,7 +159,7 @@ public class CreateTileDialog extends JFrame implements ActionListener {
 	    	File imageFile=chooser.getSelectedFile();
 	    	try {
 	    		BufferedImage baseImage=ImageIO.read(imageFile);
-	    		TileSet ts=Parent.getMap().getTileSet();
+	    		SquareTileSet ts=Parent.getMap().getTileSet();
 	    		//produce default tile name 
 	    		String imagePath=imageFile.getAbsolutePath();
 	    		int nameStart=imagePath.lastIndexOf(File.separator);

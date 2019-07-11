@@ -25,11 +25,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PrintTest extends JFrame implements ChangeListener {
 
-	private MapViewer ActiveViewer;
+	private SquareMapViewer ActiveViewer;
 	private SpinnerNumberModel PageChooser;
 	private TestPaper testPage;
 	
-	public PrintTest(MapViewer viewer)
+	public PrintTest(SquareMapViewer viewer)
 	{
 		super("Print Test");
 		//create UI
@@ -72,16 +72,16 @@ public class PrintTest extends JFrame implements ChangeListener {
 	            "txt");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showOpenDialog(null);
-	    Map saveMap;
+	    SquareMap saveMap;
 	    if (returnValue==JFileChooser.APPROVE_OPTION)
 	    {
 	    	File save=chooser.getSelectedFile();
 	    	try {
-				saveMap=new Map(save.getAbsolutePath());
+				saveMap=SquareMap.createSquareMap(save.getAbsolutePath());
 
 				
 				//create print test JFramec
-				MapViewer viewer=new MapViewer(saveMap);
+				SquareMapViewer viewer=new SquareMapViewer(saveMap);
 				new PrintTest(viewer);
 				//
 			} catch (IOException e) {

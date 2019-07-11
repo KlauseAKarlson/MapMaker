@@ -13,14 +13,14 @@ import javax.swing.JLabel;
 public class TileChooserTest extends JFrame implements ActionListener{
 
 	private JLabel Message; 
-	private TileSet Tiles;
-	public TileChooserTest(TileSet T)
+	private SquareTileSet Tiles;
+	public TileChooserTest(SquareTileSet T)
 	{
 		super("Testing");
 		this.setLayout(new BorderLayout());
 		Tiles=T;
 		Message=new JLabel("Empty",
-				Tiles.getTile("Empty").getIcon(),
+				Tiles.getTile("Empty") ,
 				JLabel.CENTER);
 		this.add(Message, BorderLayout.NORTH);
 		TileChooser TC=new TileChooser(Tiles);
@@ -36,8 +36,8 @@ public class TileChooserTest extends JFrame implements ActionListener{
 		//System.out.print(localPath+"\n");//debug
 		String testSave=localPath+File.separator+"src"+File.separator+"testData"+File.separator+"testSave.txt";//file of test data
 		try {
-			Map testMap=new Map(testSave);
-			TileSet t=testMap.getTileSet();
+			SquareMap testMap=SquareMap.createSquareMap(testSave);
+			SquareTileSet t=testMap.getTileSet();
 			new TileChooserTest(t);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -49,7 +49,7 @@ public class TileChooserTest extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String tileName=e.getActionCommand();
 		Message.setText(tileName);
-		Message.setIcon(Tiles.getTile(tileName).getIcon());
+		Message.setIcon(Tiles.getTile(tileName) );
 	}
 
 }

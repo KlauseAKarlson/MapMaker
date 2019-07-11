@@ -38,7 +38,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private MapViewer ActiveViewer;
 	private TileChooser TSetMenu;
 	private SpinnerNumberModel LayerChooser;
-	private Map ActiveMap;
+	private SquareMap ActiveMap;
 	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, 
 		BExportToImage, BPrint;
 	private JCheckBox BAutoReplace;
@@ -49,7 +49,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	{
 		super("MapMaker");
 		this.setLayout(new BorderLayout());
-		ActiveMap=new Map(10,10);
+		ActiveMap=new SquareMap(10,10);
 		//add file interaction buttons
 		Box fileBox=Box.createHorizontalBox();
 		
@@ -82,7 +82,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		//create sidepanel wtih map editing tools
 		createSidePanel();
 		//create map viewer and put it in a scroll panel
-		ActiveViewer=new MapViewer(ActiveMap);
+		ActiveViewer=ActiveMap.getMapViewer();
 		ActiveViewer.addActionListener(this);
 		MapHolder=new JPanel();
 		MapHolder.add(this.ActiveViewer);
@@ -133,7 +133,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		//BAuto replace does not need an action listner becuase we will be checking its value when ActiveViewer is clicked instead
 		replaceBox.add(BAutoReplace);
 		BReplaceTile=new JButton("ReplaceTile");
-		BReplaceTile.setIcon(ActiveMap.getTileSet().getTile("Empty").getIcon());//gets empty tile is always available
+		BReplaceTile.setIcon(ActiveMap.getTileSet().getEmpty() );//gets empty tile is always available
 		BReplaceTile.setVerticalTextPosition(AbstractButton.TOP);
 		BReplaceTile.setHorizontalTextPosition(AbstractButton.CENTER);
 		BReplaceTile.addActionListener(this);
@@ -146,13 +146,13 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		sidePanel.add(TSetMenu);
 		this.add(sidePanel, BorderLayout.EAST);
 	}
-	public void replaceMap(Map m)
+	public void replaceMap(SquareMap m)
 	{
 		//replaces the map being edited with Map m
 		ActiveMap=m;
 		//replace map viewer
 		MapHolder.remove(ActiveViewer);
-		ActiveViewer=new MapViewer(ActiveMap);
+		ActiveViewer=ActiveMap.getMapViewer();
 		ActiveViewer.addActionListener(this);
 		MapHolder.add(ActiveViewer);
 		//update side panel
@@ -184,14 +184,14 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		LChosenTile.setText(col +","+//current collumn
 				row+","+//current row
 				layer);//current layer
-		LChosenTile.setIcon(ActiveMap.getTile(col, row, layer).getIcon());
+		LChosenTile.setIcon(ActiveMap.getTile(col, row, layer) );
 	}//end update chosen tile
 	private void updateReplaceTile()
 	{
 		/**
 		 * updates BReplaceTile to reflect currently chosen tile in Tile Chooser
 		 */
-		BReplaceTile.setIcon(TSetMenu.getChosenTile().getIcon());
+		BReplaceTile.setIcon(TSetMenu.getChosenTile() );
 	}
 	private void replaceTile()
 	{
@@ -206,7 +206,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		updateChosenTile();
 		ActiveViewer.repaint();
 	}//end replace tile
-	public Map getMap()
+	public SquareMap getMap()
 	{
 		return ActiveMap;
 	}
@@ -289,7 +289,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	    {
 	    	File save=chooser.getSelectedFile();
 	    	try {
-				Map saveMap=new Map(save.getAbsolutePath());
+				SquareMap saveMap= SquareMap.createSquareMap(save.getAbsolutePath());
 				replaceMap(saveMap);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -329,8 +329,8 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * creates a new map based on the current settings of the new map dialog window
 		 */
 		
-		TileSet t=new TileSet(DNewMap.getTileWidth(),DNewMap.getTileHeight());
-		Map m=new Map(DNewMap.getMapWidth(), DNewMap.getMapHeight(), t);
+		SquareTileSet t=new SquareTileSet(DNewMap.getTileWidth(),DNewMap.getTileHeight());
+		SquareMap m=new SquareMap(DNewMap.getMapWidth(), DNewMap.getMapHeight(), t);
 		replaceMap(m);
 	}
 	public void exportMapToImage()

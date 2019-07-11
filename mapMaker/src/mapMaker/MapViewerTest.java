@@ -13,19 +13,19 @@ import javax.swing.JScrollPane;
 
 public class MapViewerTest extends JFrame implements ActionListener{
 
-	private Map activeMap;
-	private MapViewer activeViewer;
+	private SquareMap activeMap;
+	private SquareMapViewer activeViewer;
 	private JLabel message;
-	public MapViewerTest(Map m)
+	public MapViewerTest(SquareMap m)
 	{
 		super("Testing");
 		this.setLayout(new BorderLayout());
 		activeMap=m;
 		message=new JLabel("Empty",
-				activeMap.getTileSet().getTile("Empty").getIcon(),
+				activeMap.getTileSet().getEmpty(),
 				JLabel.CENTER);
 		this.add(message, BorderLayout.NORTH);
-		activeViewer=new MapViewer(activeMap);
+		activeViewer=new SquareMapViewer(activeMap);
 		activeViewer.addActionListener(this);
 		JPanel viewerPane=new JPanel();
 		
@@ -43,7 +43,7 @@ public class MapViewerTest extends JFrame implements ActionListener{
 		//System.out.print(localPath+"\n");//debug
 		String testSave=localPath+File.separator+"src"+File.separator+"testData"+File.separator+"testSave.txt";//file of test data
 		try {
-			Map testMap=new Map(testSave);
+			SquareMap testMap=SquareMap.createSquareMap(testSave);
 			new  MapViewerTest(testMap);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -54,7 +54,7 @@ public class MapViewerTest extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		message.setText(e.getActionCommand());
 		message.setIcon(activeMap.getTile(activeViewer.getSelectedColumn(),
-				activeViewer.getSelectedRow(), 0).getIcon());
+				activeViewer.getSelectedRow(), 0) );
 	}
 
 }
