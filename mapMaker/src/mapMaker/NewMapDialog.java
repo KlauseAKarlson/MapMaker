@@ -3,19 +3,20 @@ package mapMaker;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 
 public class NewMapDialog extends JFrame implements ActionListener {
 
 	private MapMaker Parent;
 	private SpinnerNumberModel MapWidth, MapHeight, TileWidth, TileHeight;
-	public JButton BCreate;
+	private JRadioButton BSquareMap, BHexMap;
+	private String mapStyle=Map.squareMap;
+	private List<ActionListener> Listeners;
+	
+	private JButton BCreate;
 	public NewMapDialog(MapMaker m)
 	{
 		super("New Map");
@@ -49,14 +50,36 @@ public class NewMapDialog extends JFrame implements ActionListener {
 		tileSpinners.add(new JSpinner(TileHeight));
 		this.add(tileSpinners);
 		
+		Box styles=new Box(BoxLayout.X_AXIS);
+		ButtonGroup styleGroup=new ButtonGroup();
+		BSquareMap=new JRadioButton("Square Map");
+		BSquareMap.setSelected(true);
+		BSquareMap.addActionListener(this);
+		styles.add(BSquareMap);
+		styleGroup.add(BSquareMap);
+		BHexMap=new JRadioButton("Hex Map");
+		BHexMap.addActionListener(this);
+		styles.add(BHexMap);
+		styleGroup.add(BHexMap);
+		this.add(styles);
+		
 		BCreate=new JButton("Create map");
 		BCreate.addActionListener(this);
-		BCreate.addActionListener(Parent);
 		this.add(BCreate);
 		
+		Listeners=new LinkedList<ActionListener>();
 		this.pack();
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
+	}
+	
+	public void addActionListener(ActionListener a)
+	{
+		Listeners.add(a);
+	}
+	public void removeActionListener(ActionListener a)
+	{
+		Listeners.remove(a);
 	}
 	
 	public int getMapWidth()
@@ -74,6 +97,10 @@ public class NewMapDialog extends JFrame implements ActionListener {
 	public int getTileHeight()
 	{
 		return (int) TileHeight.getNumber();
+	}
+	public String getMapStyle()
+	{
+		return mapStyle;
 	}
 	
 	public void clear()
@@ -96,7 +123,26 @@ public class NewMapDialog extends JFrame implements ActionListener {
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		this.setVisible(false);
-	}
+		Object source=e.getSource();
+		if (source==this.BSquareMap)
+		{
+			this.mapStyle=Map.squareMap;
+		}else if (source==this.BHexMap)
+		{
+			this.mapStyle=Map.hexMap;
+		}else if(source==this.BCreate)
+		{
+			this.setVisible(false);
+			if (!Listeners.isEmpty())
+			{
+				ActionEvent e2=new ActionEvent(this,ActionEvent.ACTION_FIRST ,"new map");
+				for (ActionListener l:Listeners)
+				{
+					l.actionPerformed(e2);
+				}//end listener loop
+			}//end if there are listeners
+		}//else do nothing
+
+	}//end action performed
 
 }//end class

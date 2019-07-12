@@ -162,7 +162,7 @@ public class CreateTileDialog extends JFrame implements ActionListener {
 	    		TileSet ts=Parent.getMap().getTileSet();
 	    		//produce default tile name 
 	    		String imagePath=imageFile.getAbsolutePath();
-	    		int nameStart=imagePath.lastIndexOf(File.separator);
+	    		int nameStart=imagePath.lastIndexOf(File.separator)+1;
 	    		int nameEnd=imagePath.lastIndexOf(".");
 	    		this.TFTileName.setText(imagePath.substring(nameStart, nameEnd));
 	    		

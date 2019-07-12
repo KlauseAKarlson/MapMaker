@@ -1,5 +1,6 @@
 package mapMaker;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,8 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 				new Dimension(ActiveMap.getWidth()*TSet.getWidth(),
 						(ActiveMap.getHeight()*TSet.getHeight()*3+1)/4) 
 				);
+		this.addMouseListener(this);
+		this.setBackground(Color.WHITE);
 	}
 
 	public int ColumnAt(int x, int y)
@@ -41,7 +44,7 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 		int y2=y%(int)(tHeight*1.5);
 		if (TSet.inHex(x2, y2))
 		{
-			col=x/tWidth-1;
+			col=x/tWidth;
 		}else {
 			col=(x-tWidth/2)/tWidth;
 		}
@@ -60,7 +63,7 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 		int tHeight=TSet.getHeight();
 		//Create a rectangle representing the top of an even rowed hex to the top of the one bellow it. Anything outside the hex will be eitehr above or bellow
 		int x2=x%(tWidth);
-		int row=(y/(int)( tHeight*1.5) )*2;
+		int row=2 * (int)(y/(tHeight*1.5) );
 		int y2=y%(int)(tHeight*1.5);
 		if (TSet.inHex(x2, y2))
 		{
@@ -83,6 +86,7 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 	public void paint(Graphics g)
 	{
 		//iterate through hexes
+		super.paint(g);
 		int x,y; //pixel coordinates
 		int yOfset=(TSet.getHeight()*3)/4;
 		int xOfset=(TSet.getWidth()/2);
@@ -94,7 +98,7 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 				x=col*TSet.getWidth();
 				if (row%2==1)
 					x+=xOfset;
-				Tile[] tiles=ActiveMap.getTiles(row, col);
+				Tile[] tiles=ActiveMap.getTiles(col, row);
 				for (Tile t:tiles)
 				{
 					t.paintIcon(this, g, x, y);
@@ -170,6 +174,7 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 		int y=e.getY();
 		this.selectedColumn=this.ColumnAt(x, y);
 		this.selectedRow=this.RowAt(x, y);
+		System.out.print("click "+x+","+y+"RC"+selectedColumn+","+selectedRow+"\n");
 		if (!Listeners.isEmpty())
 		{
 			ActionEvent e2=new ActionEvent(this,ActionEvent.ACTION_FIRST ,x+","+y);
@@ -183,7 +188,6 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		//do nothing
-		
 	}
 
 	@Override

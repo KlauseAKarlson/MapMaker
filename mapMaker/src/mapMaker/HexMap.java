@@ -48,11 +48,7 @@ public class HexMap extends Map {
 		currentLine=saveReader.readLine();
 		//start and end are substring indexes
 		int start=currentLine.indexOf(": ")+2;//read multiple substrings from each line from now on
-		int end=currentLine.indexOf(",");
-		//numberString=currentLine.substring(start, end);//not used
-		//int tileCount=Integer.valueOf(numberString);
-		start=end+2;//get next substring
-		end=currentLine.indexOf(",", start);
+		int end=currentLine.indexOf(",");;
 		numberString=currentLine.substring(start, end);
 		int tileWidth=Integer.valueOf(numberString);
 		start=end+2;//get next substring
@@ -96,7 +92,8 @@ public class HexMap extends Map {
 				while (end!=-1)//index of returns -1 if there are no matching characters
 				{
 					tileName=currentLine.substring(start, end);
-					newMap.replaceTile(tilesAdded, line, i, tileName);
+ 
+					 
 					tilesAdded++;
 					start=end+2;
 					end=currentLine.indexOf(",", start);

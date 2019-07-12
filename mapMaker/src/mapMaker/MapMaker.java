@@ -92,6 +92,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		this.add(scrlPn);
 		//finish creating JFrame
 		DNewMap=new NewMapDialog(this);
+		DNewMap.addActionListener(this);
 		DCreateTile=new CreateTileDialog(this);
 		DCreateTile.addActionListener(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -228,49 +229,50 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource()==ActiveViewer)
+		Object source=e.getSource();
+		if (source==ActiveViewer)
 		{
 			updateChosenTile();
 			if (BAutoReplace.isSelected())
 			{
 				replaceTile();
 			}
-		}else if(e.getSource()==TSetMenu)
+		}else if(source==TSetMenu)
 		{
 			updateReplaceTile();
-		}else if(e.getSource()==BReplaceTile)
+		}else if(source==BReplaceTile)
 		{
 			replaceTile();
-		}else if (e.getSource()==this.BNewMap)
+		}else if (source==BNewMap)
 		{
 			DNewMap.showUI();
-		}else if(e.getSource()==DNewMap.BCreate)
+		}else if(source==DNewMap)
 		{
 			newMap();
-		}else if(e.getSource()==this.BAddLayer)
+		}else if(source==BAddLayer)
 		{
 			addLayer();
-		}else if(e.getSource()==this.BRemoveLayer)
+		}else if(source==BRemoveLayer)
 		{
 			removeLayer();
-		}else if(e.getSource()==BLoadSave)
+		}else if(source==BLoadSave)
 		{
 			loadSave();
-		}else if(e.getSource()==BSaveMap)
+		}else if(source==BSaveMap)
 		{
 			saveMap();
-		}else if(e.getSource()==BImportTile)
+		}else if(source==BImportTile)
 		{
 			DCreateTile.setVisible(true);
-		}else if(e.getSource()==DCreateTile)
+		}else if(source==DCreateTile)
 		{
 			//create tile from opaque image
 			addTile(DCreateTile.getTileName(),
 					DCreateTile.getTileImage());
-		}else if(e.getSource()==BExportToImage)
+		}else if(source==BExportToImage)
 		{
 			exportMapToImage();
-		}else if(e.getSource()==BPrint)
+		}else if(source==BPrint)
 		{
 			printMap();
 		}
@@ -329,8 +331,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * creates a new map based on the current settings of the new map dialog window
 		 */
 		
-		SquareTileSet t=new SquareTileSet(DNewMap.getTileWidth(),DNewMap.getTileHeight());
-		SquareMap m=new SquareMap(DNewMap.getMapWidth(), DNewMap.getMapHeight(), t);
+		Map m=Map.createMap(DNewMap.getMapStyle(), 
+				DNewMap.getMapWidth(), DNewMap.getMapHeight(),
+				DNewMap.getTileWidth(), DNewMap.getTileHeight());
 		replaceMap(m);
 	}
 	public void exportMapToImage()

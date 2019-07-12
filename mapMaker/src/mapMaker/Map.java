@@ -43,6 +43,21 @@ public abstract class Map {
 		}
 	}//end load map
 	
+	public static Map createMap(String mapType, int mapWidth, int mapHeight, int tileWidth, int tileHeight)
+	{
+		if (mapType.equals(squareMap))
+		{
+			SquareTileSet t=new SquareTileSet(tileWidth,tileHeight);
+			return new SquareMap(mapWidth, mapHeight, t);
+		}else if(mapType.equals(hexMap))
+		{
+			HexTileSet t=new HexTileSet(tileWidth, tileHeight);
+			return new HexMap(mapWidth, mapHeight, t);
+		}else
+			return null;
+		
+	}//end create map
+	
 	public Map(int width, int height)
 	{
 		/**
@@ -69,7 +84,7 @@ public abstract class Map {
 				|| y<0 || y>=mapHeight
 				|| layerNumber<0 || layerNumber>=mapLayers.size())
 		{
-			throw new IndexOutOfBoundsException("Tile outside fo map"+x+","+y+","+layerNumber);
+			return getTileSet().getEmpty();
 		}
 		Layer selectedLayer=this.mapLayers.get(layerNumber);
 		Tile t=selectedLayer.tiles[x][y];
@@ -108,7 +123,10 @@ public abstract class Map {
 				|| y<0 || y>=mapHeight
 				|| layerNumber<0 || layerNumber>=mapLayers.size())
 		{
-			throw new IndexOutOfBoundsException("Tile outside fo map");
+			if (x!=-1 && y!=-1)//ignore missing tiles in hex maps
+				throw new IndexOutOfBoundsException("Tile outside fo map");
+			else
+				return;
 		}
 		if (!getTileSet().validTileName(tileName))
 		{

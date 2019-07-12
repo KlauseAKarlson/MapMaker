@@ -28,7 +28,6 @@ public class SquareMapViewer extends MapViewer implements ActionListener {
 		this.setLayout( new GridLayout(m.getWidth(),m.getHeight()) );
 		//initiate fields
 		ActiveMap=m;
-		Listeners=new LinkedList<ActionListener> ();
 		//set width and height in pixels by multiplying number of tiles by tile dimension in pixels
 		int width = ActiveMap.getWidth() * ActiveMap.getTileSet().getWidth();
 		int height = ActiveMap.getHeight() * ActiveMap.getTileSet().getHeight();

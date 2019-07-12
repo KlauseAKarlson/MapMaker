@@ -133,7 +133,7 @@ public class HexTileSet extends TileSet {
 					rsImage.setRGB(x, y, transparent);
 			}//end row loop
 		}//end height loop
-		for (int y=(tileHeight*3)/4;y<=tileHeight;y++)
+		for (int y=(tileHeight*3)/4;y<tileHeight;y++)
 		{
 			for (int x=0;x<tileWidth;x++)
 			{
