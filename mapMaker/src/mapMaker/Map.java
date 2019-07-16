@@ -32,22 +32,124 @@ public abstract class Map {
 		 * 
 		 */
 		//evaluate and open file
-		if(!saveLocation.endsWith("map"))//make sure the save file is a text file
+		if(!saveLocation.endsWith(".map"))//make sure the save file is a text file
 			throw new IOException("Wrong file format");
-		File saveFile=new File(saveLocation);
-		BufferedReader saveReader=new BufferedReader(new FileReader(saveFile));
-		String mapType=saveReader.readLine();
-		switch (mapType)
+		ZipFile save=new ZipFile(saveLocation);
+		/**
+		 * map description contains the map type in the first line,
+		 * map width and height on the second line
+		 * number of map layers on third line
+		 * tile width and height on fourth line
+		 * and a list of all tile names on the final line
+		 */
+		ZipEntry description=save.getEntry("save.txt");
+		BufferedReader saveReader=new BufferedReader(
+				new InputStreamReader(
+						save.getInputStream(description)));
+		//read save description
+		String currentLine=saveReader.readLine();
+		String mapType=currentLine;
+		
+		//read map size
+		currentLine=saveReader.readLine();
+		//from now on, start and end will be the indexes of the start of a substring to be extracted from current line
+		//numberString will be used to store a substring containing a number to be parsed
+		int start=currentLine.indexOf(":", 0)+1;
+		int end=currentLine.indexOf(",");
+		String numberString=currentLine.substring(start, end);
+		int mapWidth=Integer.parseInt(numberString);//parse map width
+		start=end+1;
+		numberString=currentLine.substring(start);
+		int mapHeight=Integer.parseInt(numberString);//parse map height
+		
+		//read map layers
+		currentLine=saveReader.readLine();
+		start=currentLine.indexOf(":")+1;
+		numberString=currentLine.substring(start);
+		int layerCount=Integer.parseInt(numberString);//parse layer count
+		
+		//read tile size
+		currentLine=saveReader.readLine();
+		start=currentLine.indexOf(":", 0)+1;
+		end=currentLine.indexOf(",");
+		numberString=currentLine.substring(start, end);
+		int tileWidth=Integer.parseInt(numberString);//parse tile width
+		start=end+1;
+		numberString=currentLine.substring(start);
+		int tileHeight=Integer.parseInt(numberString);//parse tile height
+		
+		//read tile list
+		LinkedList<String> tileNames=new LinkedList<String>();
+		currentLine=saveReader.readLine();
+		start=0;
+		end=currentLine.indexOf(",");
+		while (end!=-1)//index of returns -1 if there are no matching characters
 		{
-			case hexMap:
-				return HexMap.loadHexMap(saveReader, saveFile);
-			case squareMap:
-				return SquareMap.loadSquareMap(saveReader, saveFile);
-			
-			default:
-				throw new IOException("Map Type not recognized");
-		}
+			tileNames.add(currentLine.substring(start,end));
+			start=end+1;
+			end=currentLine.indexOf(",", start);
+		}//end while loop, will leave one more tile to be created
+		tileNames.add(currentLine.substring(start));
+		saveReader.close();
+		
+		//create map, and load based on description
+		Map saveMap=createMap(mapType, mapWidth, mapHeight, tileWidth,  tileHeight);
+		saveMap.loadTiles(save, tileNames);//must load tiels before loading layers
+		for (int layer=0;layer<layerCount;layer++)
+		{
+			saveMap.loadLayer(save, layer);
+		}//end load layers
+		save.close();
+		return saveMap;
 	}//end load map
+	
+	private void loadTiles(ZipFile save, LinkedList<String> tileNames) throws IOException
+	{
+		BufferedImage tileImage;
+		ZipEntry tileSource;
+		TileSet tSet=this.getTileSet();
+		for (String tileName:tileNames)
+		{
+			tileSource=save.getEntry(tileName+".png");
+			tileImage=ImageIO.read(save.getInputStream(tileSource));
+			tSet.createTile(tileName, tileImage);
+		}//end loop over tiles
+	}//end load tiles
+	
+	private void loadLayer(ZipFile save, int layer) throws IOException
+	{
+		//check layer and create new one if missing
+		while (this.mapLayers.size() <= layer)
+			this.newLayer();
+		//open file
+		ZipEntry layerEntry=save.getEntry("Layer"+layer+".csv");
+		BufferedReader saveReader=new BufferedReader(
+				new InputStreamReader(
+						save.getInputStream(layerEntry)));
+		//prepare for loop operations
+		String currentLine, tileName;
+		int start,end, collumn;
+		//add tiles to layer
+		for (int line=0;line<mapHeight;line++)
+		{
+			//read line and add tiles one by one
+			currentLine=saveReader.readLine();
+			//ready substring indexes
+			start=0;
+			end=currentLine.indexOf(",");
+			collumn=0;
+			while (end!=-1)//index of returns -1 if there are no matching characters
+			{
+				tileName=currentLine.substring(start, end);
+				replaceTile(collumn, line, layer, tileName);
+				collumn++;
+				start=end+2;
+				end=currentLine.indexOf(",", start);
+			}//at the end there will be one remaining tile
+			tileName=currentLine.substring(start);
+			replaceTile(collumn, line, layer, tileName);
+		}//end iterating through height lines of a layer
+	}//end load layer
 	
 	public static Map createMap(String mapType, int mapWidth, int mapHeight, int tileWidth, int tileHeight)
 	{
