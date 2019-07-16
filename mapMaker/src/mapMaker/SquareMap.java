@@ -113,58 +113,6 @@ public class SquareMap extends Map{
 		return newMap;
 	}//end constructor from save file
 	
-	public void saveMap(String saveFile) throws IOException
-	{
-		/**
-		 * saves map as a text document
-		 */
-		if(!saveFile.endsWith("txt"))//make sure the save file is a text file
-			saveFile+=".txt";
-		File saveLocation=new File(saveFile);
-		FileWriter saveWriter=new FileWriter(saveLocation);
-		//write header
-		saveWriter.write("SquareMap");
-		saveWriter.write("mapWidth: "+this.mapWidth+"\n");
-		saveWriter.write("mapHeight: "+this.mapHeight+"\n");
-		//write tileset
-		saveWriter.write(this.mapTileSet.toString()+"\n");
-		//save any fresh (newly created) tiles
-		String saveDirectory=saveLocation.getParent();
-		this.mapTileSet.saveFresh(saveDirectory);//seperator will be added by saveFresh
-		//write layers
-		saveWriter.write("layers: "+this.mapLayers.size()+"\n");
-		Layer currentLayer;
-		String tileText;
-		Tile currentTile;
-		for (int i=0; i<mapLayers.size();i++)
-		{
-			//write layers from bottom to top
-			currentLayer=mapLayers.get(i);
-			for (int y=0; y<mapHeight;y++)
-			{
-				//write rows naturally
-				for (int x=0; x<mapWidth;x++)
-				{
-					currentTile =currentLayer.tiles[x][y];
-					if (currentTile == null)//take care of uninitialized empty tiles
-					{
-						tileText="Empty";
-					}else {
-
-						tileText=currentTile.getName();
-					}
-					if(x<mapWidth-1)
-					{
-						tileText+=", ";
-					}else {
-						tileText+="\n";
-					}
-					saveWriter.write(tileText);
-				}//end X (width) loop
-			}//end y (height) loop
-		}//end layers loop
-		saveWriter.close();
-	}//end save map
 	
 	public SquareTileSet getTileSet()
 	{
@@ -175,6 +123,10 @@ public class SquareMap extends Map{
 	@Override
 	public MapViewer getMapViewer() {
 		return new SquareMapViewer(this);
+	}
+	@Override
+	public String getMapType() {
+		return this.squareMap;
 	}
 	
 }//end map class

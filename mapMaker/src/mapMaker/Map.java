@@ -2,11 +2,16 @@ package mapMaker;
 
 import java.awt.Component;
 import java.awt.Graphics;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.zip.*;
+
+import javax.imageio.ImageIO;
 
 import mapMaker.Map.Layer;
 
@@ -24,9 +29,10 @@ public abstract class Map {
 		/**
 		 * functions as a factory method for loading maps from saved files
 		 * 
+		 * 
 		 */
 		//evaluate and open file
-		if(!saveLocation.endsWith("txt"))//make sure the save file is a text file
+		if(!saveLocation.endsWith("map"))//make sure the save file is a text file
 			throw new IOException("Wrong file format");
 		File saveFile=new File(saveLocation);
 		BufferedReader saveReader=new BufferedReader(new FileReader(saveFile));
@@ -71,7 +77,139 @@ public abstract class Map {
 		mapLayers.add(background);
 	}//end constructor
 	
-	public abstract void saveMap(String saveFile) throws IOException;
+	public void saveMap(String saveFile) throws IOException
+	{
+		/**
+		 * creates a save file with the .map file extension
+		 * 
+		 * the save file is a zip file with the map description saved as save.txt
+		 * and each layer saved as layer(N).csv where N is the layer number
+		 * the tiles will be saved as (tile name).png 
+		 */
+		if(!saveFile.endsWith(".map"))//make sure the save file is a text file
+			saveFile+=".map";
+		//create zip file
+		File saveLocation=new File(saveFile);
+		ZipOutputStream zipStream= new ZipOutputStream(new FileOutputStream(saveLocation));
+		/**
+		 * map description contains the map type in the first line,
+		 * map width and height on the second line
+		 * number of map layers on third line
+		 * tile width and height on fourth line
+		 * and a list of all tile names on the final line
+		 */
+		ZipEntry saveEntry=new ZipEntry("save.txt");
+		zipStream.putNextEntry(saveEntry);
+		Writer saveWriter=new BufferedWriter(new OutputStreamWriter(zipStream));
+		String mapType=this.getMapType();
+		//write type
+		saveWriter.write(mapType+"\n");
+		//write width and height
+		saveWriter.write("Map Size:"+
+				this.getWidth()+","+
+				this.getHeight()+"\n");
+		//write layers
+		saveWriter.write("layers:"+this.mapLayers.size()+"\n");
+		//write tile size
+		saveWriter.write("tileSize:"+
+				this.getTileSet().getWidth()+","+
+				this.getTileSet().getHeight()+"\n");
+		//write tile names
+		Enumeration<Tile> tiles=this.getTileSet().getTiles();
+		StringBuffer tileNames=new StringBuffer();
+		String name;
+		while (tiles.hasMoreElements())
+		{
+			name=tiles.nextElement().getName();
+			tileNames.append(name);
+			if(tiles.hasMoreElements())
+				tileNames.append(",");
+		}//end iterate through tiles
+		saveWriter.write(tileNames.toString());
+		//finish writing save description
+		saveWriter.flush();
+		zipStream.closeEntry();
+		//save layers and tiles
+		saveLayers(zipStream);
+		saveTiles(zipStream);
+		//close
+		zipStream.close();
+	}
+	
+	private void saveTiles(ZipOutputStream zipStream) throws IOException
+	{
+		/**
+		 * saves fresh tiles to save
+		 */
+		Enumeration<Tile> tiles=this.getTileSet().getTiles();
+		Tile currentTile;
+		int tileWidth=this.getTileSet().getWidth();
+		int tileHeight=this.getTileSet().getHeight();
+		while(tiles.hasMoreElements())
+		{
+			currentTile=tiles.nextElement();
+			//get the java.awt.image from that imageicon being used as the image for the tile
+			Image tileImage=currentTile.getImage();
+			//create buffered image for  ImageIO
+			BufferedImage bi = new BufferedImage(tileWidth,tileHeight,BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2 = bi.createGraphics();
+			g2.drawImage(tileImage, 0, 0, null);
+			g2.dispose();
+			//create zip file and write
+			ZipEntry zipEntry = new ZipEntry(currentTile.getName()+".png");
+			zipStream.putNextEntry(zipEntry);							
+			ImageIO.write(bi, "png", zipStream);//save using image name+
+			zipStream.closeEntry();
+
+		}//end while loop
+	}//end save fresh tiles
+	
+	private void saveLayers(ZipOutputStream zipStream) throws IOException
+	{
+		/**
+		 * saves layers to zip file
+		 */
+		ZipEntry layerEntry;
+		Writer saveWriter;
+		Layer currentLayer;
+		Tile currentTile;
+		String tileText;
+		for (int i=0;i<mapLayers.size();i++)
+		{
+			//create zip entry and prepare writer
+			layerEntry=new ZipEntry("Layer"+i+".csv");
+			zipStream.putNextEntry(layerEntry);
+			currentLayer=mapLayers.get(i);
+			saveWriter=new BufferedWriter(new OutputStreamWriter(zipStream));
+			//write file
+			for (int y=0; y<mapHeight;y++)
+			{
+				//write rows naturally
+				for (int x=0; x<mapWidth;x++)
+				{
+					currentTile =currentLayer.tiles[x][y];
+					if (currentTile == null)//take care of uninitialized empty tiles
+					{
+						tileText="Empty";
+					}else {
+
+						tileText=currentTile.getName();
+					}
+					if(x<mapWidth-1)
+					{
+						tileText+=", ";
+					}else {
+						tileText+="\n";
+					}
+					saveWriter.write(tileText);
+				}//end X (width) loop
+			}//end y (height) loop
+			//close entry
+			saveWriter.flush();
+			zipStream.closeEntry();
+			
+		}//end iterate loop
+	}//end save layers
 	
 	public abstract TileSet getTileSet();
 
@@ -151,6 +289,9 @@ public abstract class Map {
 	{
 		return this.mapHeight;
 	}
+	
+	public abstract String getMapType();
+	
 	public abstract MapViewer getMapViewer()
 	/**
 	 * produces a map viewer that shows this map.

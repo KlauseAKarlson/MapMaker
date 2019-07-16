@@ -32,31 +32,15 @@ public abstract class TileSet {
 		Tile empty= new Tile("Empty", blank, true);
 		tiles.put("Empty", empty);
 	}
-	public abstract String toString();
 	
-	public void saveFresh(String saveDirectory) throws IOException
+	public Enumeration<Tile> getTiles()
 	{
 		/**
-		 * saves any fresh (newly created) tiles in provided save directory 
+		 * returns an enumeration containing a list of all tiles in the tile set
 		 */
-		Enumeration<Tile> tileEnum=this.tiles.elements();
-		Tile currentTile;
-		while(tileEnum.hasMoreElements())
-		{
-			currentTile=tileEnum.nextElement();
-			if (currentTile.isFresh())
-			{
-				//get the java.awt.image from that imageicon being used as the image for the tile
-				Image tileImage=currentTile.getImage();
-
-				BufferedImage bi = new BufferedImage(this.tileWidth,this.tileHeight,BufferedImage.TYPE_INT_ARGB);
-				Graphics2D g2 = bi.createGraphics();
-				g2.drawImage(tileImage, 0, 0, null);
-				g2.dispose();
-				ImageIO.write(bi, "png", new File(saveDirectory+File.separator+currentTile.getName()+".png"));//save using image name
-			}//else do nothing
-		}//end while loop
-	}//end saveFresh
+		return this.tiles.elements();
+	}
+	
 	
 	public abstract  void createTile(String tileName, BufferedImage i);
 	
