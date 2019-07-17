@@ -113,7 +113,7 @@ public class SquareTileSet extends TileSet{
 		 */
 		if (tileName.equalsIgnoreCase("Empty"))
 		{
-			throw new IllegalArgumentException("\"Empty\" is a reserved name");
+			return;//Empty is a reserved name
 		}
 		Tile newTile=new Tile(tileName, resizeImage(i), true);
 		tiles.put(tileName, newTile);

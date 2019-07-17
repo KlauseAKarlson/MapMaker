@@ -230,52 +230,60 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source=e.getSource();
-		if (source==ActiveViewer)
-		{
-			updateChosenTile();
-			if (BAutoReplace.isSelected())
+		try{//IO may result in an error
+			if (source==ActiveViewer)
+			{
+				updateChosenTile();
+				if (BAutoReplace.isSelected())
+				{
+					replaceTile();
+				}
+			}else if(source==TSetMenu)
+			{
+				updateReplaceTile();
+			}else if(source==BReplaceTile)
 			{
 				replaceTile();
+			}else if (source==BNewMap)
+			{
+				DNewMap.showUI();
+			}else if(source==DNewMap)
+			{
+				newMap();
+			}else if(source==BAddLayer)
+			{
+				addLayer();
+			}else if(source==BRemoveLayer)
+			{
+				removeLayer();
+			}else if(source==BLoadSave)
+			{
+				loadSave();
+			}else if(source==BSaveMap)
+			{
+				saveMap();
+			}else if(source==BImportTile)
+			{
+				DCreateTile.setVisible(true);
+			}else if(source==DCreateTile)
+			{
+				//create tile from opaque image
+				addTile(DCreateTile.getTileName(),
+						DCreateTile.getTileImage());
+			}else if(source==BExportToImage)
+			{
+				exportMapToImage();
+			}else if(source==BPrint)
+			{
+				printMap();
 			}
-		}else if(source==TSetMenu)
-		{
-			updateReplaceTile();
-		}else if(source==BReplaceTile)
-		{
-			replaceTile();
-		}else if (source==BNewMap)
-		{
-			DNewMap.showUI();
-		}else if(source==DNewMap)
-		{
-			newMap();
-		}else if(source==BAddLayer)
-		{
-			addLayer();
-		}else if(source==BRemoveLayer)
-		{
-			removeLayer();
-		}else if(source==BLoadSave)
-		{
-			loadSave();
-		}else if(source==BSaveMap)
-		{
-			saveMap();
-		}else if(source==BImportTile)
-		{
-			DCreateTile.setVisible(true);
-		}else if(source==DCreateTile)
-		{
-			//create tile from opaque image
-			addTile(DCreateTile.getTileName(),
-					DCreateTile.getTileImage());
-		}else if(source==BExportToImage)
-		{
-			exportMapToImage();
-		}else if(source==BPrint)
-		{
-			printMap();
-		}
+		}catch (Exception ex) {
+			//tell user about any error that occurs.
+			JOptionPane.showMessageDialog(this,
+				    ex.toString(),
+				    "Error",
+				    JOptionPane.WARNING_MESSAGE);
+		}//end catch
 	}//end actionPerformed(e)
 	public void loadSave()
 	{
@@ -283,8 +291,8 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * give user load save option
 		 */
 		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("plain text",
-	            "txt");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Map Maker Map",
+	            "map");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showOpenDialog(this);
 	    if (returnValue==JFileChooser.APPROVE_OPTION)
@@ -305,8 +313,8 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * provides user save dialogue and saves file
 		 */
 		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Plain Text",
-	            "txt");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Map Maker Map",
+	            "map");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showSaveDialog(this);
 	    if (returnValue==JFileChooser.APPROVE_OPTION)
