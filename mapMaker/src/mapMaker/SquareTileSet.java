@@ -101,7 +101,7 @@ public class SquareTileSet extends TileSet{
 				}
 			}//end width scan
 		}//end height scan
-		
+
 		return recoloredImage;
 	}//end resize and transparent
 	public void createTile(String tileName, BufferedImage i)

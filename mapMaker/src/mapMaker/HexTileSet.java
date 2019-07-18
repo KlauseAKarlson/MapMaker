@@ -43,10 +43,34 @@ public class HexTileSet extends TileSet {
 		}else {
 			int x2=x-tileWidth/2;
 			inside =
-					( y < (tileHeight -slope*x2) )&&
-					(y > (0+slope*x2));
+					( y <= (tileHeight -slope*x2) )&&
+					(y >= (0+slope*x2));
 		}
 		return inside;
+	}
+
+	public boolean outHex(int x, int y)
+	{
+		/**
+		 * returns true if the coordinates are outside the colored part of the tile.
+		 * attempting to use this to draw the left and right side of the border cause strange artifacting
+		 */
+		double slope = (tileHeight/2.0)/(tileWidth);
+		boolean inside=false;
+		//check in acordance to sides
+		if (x<(tileWidth/2 +1) )
+		{
+			inside= 
+					( y+1 < (0.75*tileHeight+slope*x) ) &&//bottom
+					( y-1 > (0.25*tileHeight-slope*x));//top
+		}else {
+			int x2=x-tileWidth/2;
+			inside =
+					( y+1 <= (tileHeight -slope*x2) )&&//bottom
+					(y-1 >= (0+slope*x2));//top
+		}
+
+		return !inside;
 	}
 	
 	@Override
@@ -120,17 +144,23 @@ public class HexTileSet extends TileSet {
 		BufferedImage rsImage=new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
 		//create space for color data
 		int transparent=new Color(0,0,0,0).getRGB();
+		int black =Color.BLACK.getRGB();
 		//draw a copy of the source image
 		Graphics2D g2d = rsImage.createGraphics();
 		g2d.drawImage(i, 0, 0, tileWidth, tileHeight, null);
 		g2d.dispose();
 		//make areas outside the hex transparent
-		for (int y=0;y<=tileHeight/4;y++)
+		for (int y=0;y<tileHeight;y++)
 		{
 			for (int x=0;x<tileWidth;x++)
 			{
-				if (! inHex(x, y) )
-					rsImage.setRGB(x, y, transparent);
+				if (outHex(x,y) )//if its outside the colored part of the hex
+				{
+					if (! inHex(x, y) )//but inside the transparent part
+						rsImage.setRGB(x, y, transparent);
+					else
+						rsImage.setRGB(x,y,black);
+				}
 			}//end row loop
 		}//end height loop
 		for (int y=(tileHeight*3)/4;y<tileHeight;y++)
@@ -141,6 +171,14 @@ public class HexTileSet extends TileSet {
 					rsImage.setRGB(x, y, transparent);
 			}//end row loop
 		}//end height loop
+		//draw side borders because it will artifact if we try to use the primary loop
+		int xRight=tileWidth-1;
+		for(int y=(tileHeight/4);y<=tileHeight*0.75;y++)
+		{
+			rsImage.setRGB(0, y, black);
+			rsImage.setRGB(xRight, y, black);
+		}
+		
 		return rsImage;
 	}//end resizeImage
 
@@ -155,7 +193,7 @@ public class HexTileSet extends TileSet {
 		BufferedImage recoloredImage=new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
 		//create space for color data
 		int transparent=new Color(0,0,0,0).getRGB();
-		int target=rsImage.getRGB(0, tileHeight/2);
+		int target=rsImage.getRGB(1, tileHeight/2);
 		int pixel;//color of pixel extracted from rsImage
 		//iterate through pixels using x for width and y for height
 		for (int y=0; y<rsImage.getHeight(); y++)

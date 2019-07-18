@@ -22,8 +22,8 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 		ActiveMap=m;
 		TSet=(HexTileSet)m.getTileSet();
 		this.setPreferredSize(
-				new Dimension(ActiveMap.getWidth()*TSet.getWidth(),
-						(ActiveMap.getHeight()*TSet.getHeight()*3+1)/4) 
+				new Dimension(ActiveMap.getWidth()*TSet.getWidth()+TSet.getWidth()/2,
+						((ActiveMap.getHeight()*3+1 )*TSet.getHeight()  )/4) 
 				);
 		this.addMouseListener(this);
 		this.setBackground(Color.WHITE);
@@ -169,12 +169,16 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		//do nothing
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		//identify selected tile and report to action listener
 		int x=e.getX();
 		int y=e.getY();
 		this.selectedColumn=this.ColumnAt(x, y);
 		this.selectedRow=this.RowAt(x, y);
-		System.out.print("click "+x+","+y+"RC"+selectedColumn+","+selectedRow+"\n");
 		if (!Listeners.isEmpty())
 		{
 			ActionEvent e2=new ActionEvent(this,ActionEvent.ACTION_FIRST ,x+","+y);
@@ -183,12 +187,7 @@ public class HexMapViewer extends MapViewer implements MouseListener {
 				l.actionPerformed(e2);
 			}
 		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		//do nothing
-	}
+	}//end mouse pressed
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
