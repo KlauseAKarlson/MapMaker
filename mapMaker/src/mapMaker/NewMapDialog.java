@@ -24,8 +24,9 @@ public class NewMapDialog extends JFrame implements ActionListener {
 		//initialize spinner number models
 		MapWidth=new SpinnerNumberModel(10, 5, 500, 1);
 		MapHeight=new SpinnerNumberModel(10, 5, 500, 1);
-		TileWidth=new SpinnerNumberModel(72, 15, 400, 10);
-		TileHeight=new SpinnerNumberModel(72, 15, 400, 10);
+		//by default page format: 1/2 inch pre set, 1/4 inch minimum, 2 inches aximum, 1/4 inch on button press 
+		TileWidth=new SpinnerNumberModel( 36, 18, 144,18);
+		TileHeight=new SpinnerNumberModel( 36, 18, 144, 18);
 		//initialize ui
 		getContentPane().setLayout(
 			    new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -110,8 +111,8 @@ public class NewMapDialog extends JFrame implements ActionListener {
 		 */
 		MapWidth.setValue(10);
 		MapHeight.setValue(10);
-		TileWidth.setValue(100);
-		TileHeight.setValue(100);
+		TileWidth.setValue(36);
+		TileHeight.setValue(36);
 	}
 	public void showUI()
 	{
