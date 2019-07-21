@@ -13,7 +13,7 @@ public class NewMapDialog extends JFrame implements ActionListener {
 	private MapMaker Parent;
 	//default values are centralized and static to allow values to be reset each time the dialogue is opened
 	public static int DefaultMapWidth=10,DefaultMapHeight=10;
-	public static double DefaultTileWidth=1,DefaultTileHeight=1;
+	private static double DefaultTileWidth=1,DefaultTileHeight=1;
 	private SpinnerNumberModel MapWidth, MapHeight, TileWidth, TileHeight;
 	private JRadioButton BSquareMap, BHexMap;
 	private String mapStyle=Map.squareMap;

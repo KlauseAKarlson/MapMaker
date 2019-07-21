@@ -45,11 +45,12 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private NewMapDialog DNewMap;
 	private CreateTileDialog DCreateTile;
 	
-	public MapMaker()
+
+	public MapMaker(Map m)
 	{
 		super("MapMaker");
 		this.setLayout(new BorderLayout());
-		ActiveMap=new SquareMap(10,10);
+		ActiveMap=m;
 		//add file interaction buttons
 		Box fileBox=Box.createHorizontalBox();
 		
@@ -382,6 +383,6 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	}//print 
 	
 	public static void main(String[] args) {
-		new MapMaker();
+		new MapMaker(new SquareMap(5,5));
 	}
 }//end Map Maker
