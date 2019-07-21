@@ -8,9 +8,9 @@ import java.util.List;
 
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class NewMapDialog extends JFrame implements ActionListener {
 
-	private MapMaker Parent;
 	//default values are centralized and static to allow values to be reset each time the dialogue is opened
 	public static int DefaultMapWidth=10,DefaultMapHeight=10;
 	public static double DefaultTileWidth=1,DefaultTileHeight=1;
@@ -20,10 +20,9 @@ public class NewMapDialog extends JFrame implements ActionListener {
 	private List<ActionListener> Listeners;
 	
 	private JButton BCreate;
-	public NewMapDialog(MapMaker m)
+	public NewMapDialog()
 	{
 		super("New Map");
-		Parent=m;
 		//initialize spinner number models
 		MapWidth=new SpinnerNumberModel(DefaultMapWidth, 5, 500, 1);
 		MapHeight=new SpinnerNumberModel(DefaultMapHeight, 5, 500, 1);

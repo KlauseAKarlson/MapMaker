@@ -5,11 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-
-import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class TileChooserTest extends JFrame implements ActionListener{
 
 	private JLabel Message; 

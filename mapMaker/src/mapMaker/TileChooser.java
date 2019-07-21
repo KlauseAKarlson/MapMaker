@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.*;
+@SuppressWarnings("serial")
 public class TileChooser extends JScrollPane implements ActionListener{
 
 	/**

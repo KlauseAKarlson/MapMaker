@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+@SuppressWarnings("serial")
 public class CreateTileDialog extends JFrame implements ActionListener {
 
 	private MapMaker Parent;

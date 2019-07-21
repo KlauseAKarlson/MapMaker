@@ -8,13 +8,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.zip.*;
-
 import javax.imageio.ImageIO;
-
-import mapMaker.Map.Layer;
-
 
 public abstract class Map {
 

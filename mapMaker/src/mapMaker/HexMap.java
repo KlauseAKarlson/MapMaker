@@ -1,16 +1,5 @@
 package mapMaker;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-
-import mapMaker.Map.Layer;
-
 public class HexMap extends Map {
 
 	private HexTileSet mapTileSet;
@@ -39,6 +28,7 @@ public class HexMap extends Map {
 	public MapViewer getMapViewer() {
 		return new HexMapViewer(this);
 	}
+	@SuppressWarnings("static-access")
 	@Override
 	public String getMapType() {
 		return this.hexMap;

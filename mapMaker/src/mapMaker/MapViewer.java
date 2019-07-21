@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public abstract class MapViewer extends JPanel implements Printable, Pageable{
 	protected List<ActionListener> Listeners;
 	protected int selectedColumn=0, selectedRow=0;

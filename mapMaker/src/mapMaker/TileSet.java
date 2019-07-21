@@ -2,15 +2,11 @@ package mapMaker;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 public abstract class TileSet {
 

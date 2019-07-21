@@ -1,9 +1,9 @@
 package mapMaker;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
 
+@SuppressWarnings("serial")
 public class Tile extends ImageIcon {
 	boolean fresh;//true if the tile is new/replaced since the last time the program was loaded. if true the image will be saved
 	

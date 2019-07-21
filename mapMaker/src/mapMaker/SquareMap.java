@@ -1,12 +1,5 @@
 package mapMaker;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
+
 public class SquareMap extends Map{
 
 
@@ -39,6 +32,7 @@ public class SquareMap extends Map{
 	public MapViewer getMapViewer() {
 		return new SquareMapViewer(this);
 	}
+	@SuppressWarnings("static-access")
 	@Override
 	public String getMapType() {
 		return this.squareMap;

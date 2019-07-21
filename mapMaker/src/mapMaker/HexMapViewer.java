@@ -13,6 +13,7 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
+@SuppressWarnings("serial")
 public class HexMapViewer extends MapViewer implements MouseListener {
 
 	private HexMap ActiveMap;

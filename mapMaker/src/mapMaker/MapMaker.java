@@ -27,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+@SuppressWarnings("serial")
 public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	/**
 	 * main
@@ -92,7 +93,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		scrlPn.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.add(scrlPn);
 		//finish creating JFrame
-		DNewMap=new NewMapDialog(this);
+		DNewMap=new NewMapDialog();
 		DNewMap.addActionListener(this);
 		DCreateTile=new CreateTileDialog(this);
 		DCreateTile.addActionListener(this);

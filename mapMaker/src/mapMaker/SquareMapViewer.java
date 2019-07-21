@@ -4,13 +4,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.*;
-import java.util.LinkedList;
-import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+@SuppressWarnings("serial")
 public class SquareMapViewer extends MapViewer implements ActionListener {
 
 	private SquareMap ActiveMap;
