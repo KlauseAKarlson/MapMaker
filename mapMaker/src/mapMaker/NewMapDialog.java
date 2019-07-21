@@ -11,6 +11,9 @@ import javax.swing.*;
 public class NewMapDialog extends JFrame implements ActionListener {
 
 	private MapMaker Parent;
+	//default values are centralized and static to allow values to be reset each time the dialogue is opened
+	public static int DefaultMapWidth=10,DefaultMapHeight=10;
+	public static double DefaultTileWidth=1,DefaultTileHeight=1;
 	private SpinnerNumberModel MapWidth, MapHeight, TileWidth, TileHeight;
 	private JRadioButton BSquareMap, BHexMap;
 	private String mapStyle=Map.squareMap;
@@ -22,11 +25,11 @@ public class NewMapDialog extends JFrame implements ActionListener {
 		super("New Map");
 		Parent=m;
 		//initialize spinner number models
-		MapWidth=new SpinnerNumberModel(10, 5, 500, 1);
-		MapHeight=new SpinnerNumberModel(10, 5, 500, 1);
-		//by default page format: 1/2 inch pre set, 1/4 inch minimum, 2 inches aximum, 1/4 inch on button press 
-		TileWidth=new SpinnerNumberModel( 36, 18, 144,18);
-		TileHeight=new SpinnerNumberModel( 36, 18, 144, 18);
+		MapWidth=new SpinnerNumberModel(DefaultMapWidth, 5, 500, 1);
+		MapHeight=new SpinnerNumberModel(DefaultMapHeight, 5, 500, 1);
+		// 1/2 inch pre set, 1/4 inch minimum, 2 inches maximum, 1/4 inch on button press 
+		TileWidth=new SpinnerNumberModel( DefaultTileWidth, 0.25, 2, 0.25);
+		TileHeight=new SpinnerNumberModel( DefaultTileHeight, 0.25, 2, 0.25);
 		//initialize ui
 		getContentPane().setLayout(
 			    new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -93,11 +96,12 @@ public class NewMapDialog extends JFrame implements ActionListener {
 	}
 	public int getTileWidth()
 	{
-		return (int) TileWidth.getNumber();
+		//java.awt.print restricts pixels per inch to 72
+		return (int) (72 *(double)TileWidth.getNumber());//convert from inches to pixels
 	}
 	public int getTileHeight()
 	{
-		return (int) TileHeight.getNumber();
+		return (int) (72*(double)TileHeight.getNumber());//convert from inches to pixels
 	}
 	public String getMapStyle()
 	{
@@ -109,18 +113,17 @@ public class NewMapDialog extends JFrame implements ActionListener {
 		/**
 		 * resets all spinner number models to default
 		 */
-		MapWidth.setValue(10);
-		MapHeight.setValue(10);
-		TileWidth.setValue(36);
-		TileHeight.setValue(36);
+		MapWidth.setValue(DefaultMapWidth);
+		MapHeight.setValue(DefaultMapHeight);
+		TileWidth.setValue(DefaultTileWidth);
+		TileHeight.setValue(DefaultTileHeight);
 	}
-	public void showUI()
+	@Override
+	public void setVisible(boolean b)
 	{
-		/**
-		 * resets spinners and makes window visible
-		 */
-		clear();
-		this.setVisible(true);
+		if(b)
+			clear();
+		super.setVisible(b);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

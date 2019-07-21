@@ -245,7 +245,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 			replaceTile();
 		}else if (source==BNewMap)
 		{
-			DNewMap.showUI();
+			DNewMap.setVisible(true);
 		}else if(source==DNewMap)
 		{
 			newMap();
