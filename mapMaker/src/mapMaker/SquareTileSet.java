@@ -104,45 +104,17 @@ public class SquareTileSet extends TileSet{
 	{
 		/**
 		 * creates a new tile, resizes it if needed, and places it in the hashtable under the provided name.
-		 * if this is a duplicated of an already existing tile name, the tile will be replaced
-		 * assumes the image is fresh
+		 * @param t should be true if the tile background is transparent, and allows the tiel to be used on foreground layers
 		 */
 		if (tileName.equalsIgnoreCase("Empty"))
 		{
 			return;//Empty is a reserved name
 		}
-		Tile newTile=new Tile(tileName, resizeImage(i), true);
+		int transparent=new Color(0,0,0,0).getRGB();
+		boolean foreground=(i.getRGB(1, tileHeight/2) == transparent);
+		Tile newTile=new Tile(tileName, resizeImage(i), foreground);
 		tiles.put(tileName, newTile);
 	}
 	
-	public void createTile(String tileName, String imagePath, boolean freshTile) throws IOException
-	{
-		/**
-		 * creates a new tile, resizes it if needed, and places it in the hashtable under the provided name.
-		 * if this is a duplicated of an already existing tile name, the tile will be replaced
-		 * freshTile should be true if the tile is being created for the first time, or false if the tile is being loaded from a saved project.
-		 * primarily used for loading saved tiles
-		 */
-		if (!tileName.equalsIgnoreCase("empty"))
-		{
-			File sourceFile=new File(imagePath);
-			BufferedImage inputImage= ImageIO.read(sourceFile);
-			Tile newTile;//create tile outside of if/then clause
-			//check width and height
-			boolean GoodWidth =  inputImage.getWidth()==this.tileWidth;
-			boolean GoodHeight= inputImage.getHeight()==this.tileHeight;
-			if(GoodWidth && GoodHeight)
-			{
-				//if correct width and height, go ahead and create tile
-				newTile = new Tile(tileName, inputImage, freshTile);
-			}else {
-				BufferedImage rsImage=resizeImage(inputImage);
-				newTile= new Tile(tileName, rsImage, true);
-			}
-			tiles.put(tileName, newTile);
-
-		}//else do nothing, prevent tile creation for reserved name
-			
-	}//end createTile
-
+	
 }

@@ -1,5 +1,6 @@
 package mapMaker;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -354,6 +355,7 @@ public abstract class Map {
 		 * replaces tile at selected location with the one designated by tile name
 		 * 
 		 */
+		//check bounds
 		if (x<0 || x>=mapWidth 
 				|| y<0 || y>=mapHeight
 				|| layerNumber<0 || layerNumber>=mapLayers.size())
@@ -361,14 +363,19 @@ public abstract class Map {
 			if (x!=-1 && y!=-1)//ignore missing tiles in hex maps
 				throw new IndexOutOfBoundsException("Tile outside fo map");
 			else
-				return;
+				return;//do nothing, common with hex style, 
 		}
+
+		//censure valid tile
 		if (!getTileSet().validTileName(tileName))
 		{
 			throw new IllegalArgumentException("Tile name not in tile set");
 		}
 		Layer selectedLayer= mapLayers.get(layerNumber);
 		Tile replacementTile = getTileSet().getTile(tileName);
+		//make sure replacement tile is not a background tile being put in the foreground
+		if (layerNumber>0 && ! replacementTile.foreground() )
+			return; //do nothing rather than replacing tile, don't throw an error.
 		selectedLayer.tiles[x][y]=replacementTile;
 	}//end replace tile
 	

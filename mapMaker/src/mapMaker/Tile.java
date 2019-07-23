@@ -5,22 +5,22 @@ import java.awt.image.BufferedImage;
 
 @SuppressWarnings("serial")
 public class Tile extends ImageIcon {
-	boolean fresh;//true if the tile is new/replaced since the last time the program was loaded. if true the image will be saved
+	private boolean foreground;
 	
-	public Tile(String name, BufferedImage imageBuffer, boolean isFresh)
+	public Tile(String name, BufferedImage imageBuffer, boolean transparent)
 	{
 		super(imageBuffer);
 		this.setDescription(name);
-		fresh=isFresh;
+		foreground=transparent;
 	}
 	
 	public String getName()
 	{
 		return this.getDescription();
 	}
-	public boolean isFresh()
+	public boolean foreground()
 	{
-		return fresh;
+		return foreground;
 	}
 
 }

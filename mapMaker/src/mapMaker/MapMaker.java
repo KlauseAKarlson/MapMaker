@@ -157,7 +157,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		MapHolder.remove(ActiveViewer);
 		ActiveViewer=ActiveMap.getMapViewer();
 		ActiveViewer.addActionListener(this);
+		MapHolder.repaint();
 		MapHolder.add(ActiveViewer);
+		MapHolder.repaint();
 		//update side panel
 		this.TSetMenu.updateTileSet(ActiveMap.getTileSet());
 		updateLayers();//update layers first to prevent index out of bound errors
@@ -382,6 +384,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
             }//end catch
         }//else do nothing because the user canceled
 	}//print 
+	
 	
 	public static void main(String[] args) {
 		new MapMaker(new SquareMap(5,5));

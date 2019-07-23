@@ -106,35 +106,13 @@ public class HexTileSet extends TileSet {
 		{
 			throw new IllegalArgumentException("\"Empty\" is a reserved name");
 		}
-		Tile newTile=new Tile(tileName, resizeImage(i), true);
+		int transparent=new Color(0,0,0,0).getRGB();
+		boolean foreground=(i.getRGB(1, tileHeight/2) == transparent);
+		Tile newTile=new Tile(tileName, resizeImage(i), foreground);
 		tiles.put(tileName, newTile);
 	}
 
-	@Override
-	public void createTile(String tileName, String imagePath, boolean freshTile) throws IOException {
-		if (!tileName.equalsIgnoreCase("empty"))
-		{
-			File sourceFile=new File(imagePath);
-			BufferedImage inputImage= ImageIO.read(sourceFile);
-			Tile newTile;//create tile outside of if/then clause
-			//check width and height
-			boolean GoodWidth =  inputImage.getWidth()==this.tileWidth;
-			boolean GoodHeight= inputImage.getHeight()==this.tileHeight;
-			if(GoodWidth && GoodHeight)
-			{
-				//if correct width and height, go ahead and create tile
-				newTile = new Tile(tileName, inputImage, freshTile);
-			}else {
-				//resize image and create tile, rsImage=Re-Sized Image
-				BufferedImage rsImage=resizeImage(inputImage);
-				newTile= new Tile(tileName, rsImage, true);
-			}
-			tiles.put(tileName, newTile);
-
-		}//else do nothing, prevent tile creation for reserved name
-
-	}//end create tile
-
+	
 	@Override
 	public BufferedImage resizeImage(BufferedImage i) {
 		/**

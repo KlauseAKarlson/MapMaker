@@ -25,6 +25,7 @@ public abstract class TileSet {
 		g2d.setColor(new Color(0,0,0,0));///transparent
 		g2d.drawRect(0, 0, tileWidth-1, tileHeight-1);//fill with transparent
 		g2d.dispose();
+		blank=resizeImage(blank);//resize image ensures compliance with style specific rules
 		Tile empty= new Tile("Empty", blank, true);
 		tiles.put("Empty", empty);
 	}
@@ -40,11 +41,18 @@ public abstract class TileSet {
 	
 	public abstract  void createTile(String tileName, BufferedImage i);
 	
-	public abstract void createTile(String tileName, String imagePath, boolean freshTile) throws IOException;
-	
+		
 	public abstract  BufferedImage resizeImage(BufferedImage i);
+	/**
+	 * this function resizes a tile to the correct size for use by the tile set, 
+	 * and also enforces other style specific rules.
+	 */
 	
 	public abstract BufferedImage ResizeAndTransparent(BufferedImage i);
+	/**
+	 * this function provides a resized image using TileSet.resizeImage
+	 * and also makes the background of the tile set transparent
+	 */
 
 	public int getWidth()
 	{
@@ -70,7 +78,7 @@ public abstract class TileSet {
 	public Tile getTile(String tileName)
 	{
 		return tiles.get(tileName);
-	}//end getTile
+	}
 
 	public Tile getEmpty()
 	{
@@ -86,5 +94,5 @@ public abstract class TileSet {
 		 * returns a set containing a list of all tile names
 		 */
 		return tiles.keySet();
-	}//end getTileList
+	}
 }//end class
