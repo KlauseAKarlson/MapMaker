@@ -287,8 +287,8 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * give user load save option
 		 */
 		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("plain text",
-	            "txt");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Map Maker Map",
+	            "map");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showOpenDialog(this);
 	    if (returnValue==JFileChooser.APPROVE_OPTION)
@@ -309,8 +309,8 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		 * provides user save dialogue and saves file
 		 */
 		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Plain Text",
-	            "txt");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Map Maker Map",
+	            "map");
 	    chooser.setFileFilter(filter);
 	    int returnValue=chooser.showSaveDialog(this);
 	    if (returnValue==JFileChooser.APPROVE_OPTION)
