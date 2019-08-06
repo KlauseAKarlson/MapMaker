@@ -41,7 +41,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private SpinnerNumberModel LayerChooser;
 	private Map ActiveMap;
 	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, 
-		BExportToImage, BPrint;
+		BExportToImage, BPrint, BHelp;
 	private JCheckBox BAutoReplace;
 	private NewMapDialog DNewMap;
 	private CreateTileDialog DCreateTile;
@@ -78,6 +78,10 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		BPrint=new JButton("Print Map");
 		BPrint.addActionListener(this);
 		fileBox.add(BPrint);
+		
+		BHelp = new JButton("Help");
+		BHelp.addActionListener(this);
+		fileBox.add(BHelp);
 		
 		this.add(fileBox, BorderLayout.NORTH);
 		
@@ -279,6 +283,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		}else if(source==BPrint)
 		{
 			printMap();
+		}else if(source ==BHelp)
+		{
+			help();
 		}
 	}//end actionPerformed(e)
 	public void loadSave()
@@ -384,6 +391,29 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
             }//end catch
         }//else do nothing because the user canceled
 	}//print 
+	
+	public void help()
+	{
+		/**
+		 * Shows a message box explaining the controls
+		 */
+		String helpMessage="New Map: Opens the New Map Dialogue\n"
+				+ "\u2022 Use the upper spinners to choose the map size in tiles.\n"
+				+ "\u2022 Use the lower spinners to choose the tile size in inches.\n"
+				+ "\u2022 Use the radio buttons to choose between hexogonal or square tiels.\n"
+				+ "\u2022 Hit create map to finish, or close the dialogue to cancel.\n"
+				+ "Create Tile: Opens the Tile Creation dialogue\n"
+				+ "\u2022 Hit the Choose a File button to load an image to be used as a tile.\n"
+				+ "\u2022 Use the text box to name the tile, it will automatically be named\n"
+				+ "   after the file name of the source image if you don't choose one.\n"
+				+ "\u2022 Once an image has been imported, click the preview to create the\n"
+				+ "   tile, or close the dialogue to cancel.\n"
+				+ "Click on tiles in the side panel to slect tiels to paint.\n"
+				+ "Use the Auto replace checkbox to replace tiels by just clicking on the map.\n"
+				+ "Use the spinner near the top of the panel to choose layers to paint on.\n"
+				+ "Only tiles with transparent backgrounds can be placed on layers above 0.";
+		JOptionPane.showMessageDialog(this, helpMessage, "Controls", JOptionPane.PLAIN_MESSAGE);
+	}
 	
 	
 	public static void main(String[] args) {
