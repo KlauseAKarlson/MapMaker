@@ -3,13 +3,12 @@ package mapMaker;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.print.*;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.border.LineBorder;
 
 @SuppressWarnings("serial")
-public class SquareMapViewer extends MapViewer implements ActionListener {
+public class SquareMapViewer extends MapViewer implements MouseListener {
 
 	private SquareMap ActiveMap;
 
@@ -29,73 +28,47 @@ public class SquareMapViewer extends MapViewer implements ActionListener {
 		//set width and height in pixels by multiplying number of tiles by tile dimension in pixels
 		int width = ActiveMap.getWidth() * ActiveMap.getTileSet().getWidth();
 		int height = ActiveMap.getHeight() * ActiveMap.getTileSet().getHeight();
-		this.setSize(width,height);
-		//add buttons, left to right, top to bottom
-		JButton tileButton;
-		LineBorder thinBorder=new LineBorder(Color.black,1);
-		Insets tbi=new Insets(0,0,0,0);
-		for (int row=0; row<ActiveMap.getHeight(); row++)
-		{
-			for (int col=0;col<ActiveMap.getWidth(); col++)
-			{
-				tileButton=new JButton(new MapIcon(col,row));//create a new JButton that will display the correct tile
-				tileButton.setMargin(tbi);
-				tileButton.setActionCommand(col+","+row);
-				tileButton.setBorder(thinBorder);
-				tileButton.addActionListener(this);
-				this.add(tileButton);
-			}//end column loop
-		}//end row loop
-		this.setMaximumSize(this.getSize());
-		this.setPreferredSize(getSize());
+		this.setPreferredSize(new Dimension(width, height));
+		this.addMouseListener(this);
+		this.setBackground(Color.WHITE);
 	}//end constructor
 
-
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		//extract collumn and row
-		String command = e.getActionCommand();
-		int comma=command.indexOf(",");
-		selectedColumn=Integer.parseInt( command.substring(0, comma) ) ;
-		selectedRow=Integer.parseInt(command.substring(comma+1));
-		if (!Listeners.isEmpty())
-		{
-			ActionEvent e2=new ActionEvent(this,ActionEvent.ACTION_FIRST ,command);
-			for (ActionListener l:Listeners)
-			{
-				l.actionPerformed(e2);
-			}
-		}
-	}//end action performed
-
-	private class MapIcon implements Icon
+	public void paint(Graphics g)
 	{
-		/**
-		 * light weight icon to pass through paint commands to ActiveMap
-		 */
-		private int Col,Row;
-		
-		private MapIcon(int column, int row)
+		//iterate through hexes
+		super.paint(g);
+		TileSet TSet=ActiveMap.getTileSet();
+		int x,y; //pixel coordinates
+		int yOfset=TSet.getHeight();
+		int xOfset=TSet.getWidth();
+		for (int row=0;row<ActiveMap.getHeight();row++)
 		{
-			Col=column;
-			Row=row;
-		}
-		@Override
-		public void paintIcon(Component c, Graphics g, int x, int y) {
-			ActiveMap.paintTileAt(Col, Row, x, y, c, g);
-		}
-
-		@Override
-		public int getIconWidth() {
-			return ActiveMap.getTileSet().getWidth();
-		}
-
-		@Override
-		public int getIconHeight() {
-			return ActiveMap.getTileSet().getHeight();
-		}
+			for (int col=0;col<ActiveMap.getWidth();col++)
+			{
+				y=row*yOfset;
+				x=col*xOfset;
+				Tile[] tiles=ActiveMap.getTiles(col, row);
+				for (Tile t:tiles)
+				{
+					t.paintIcon(this, g, x, y);
+				}//end layer loop
+			}//end column loop
+		}//end row loop
 		
+	}//override paint
+
+	public int ColumnAt(int x, int y)
+	{
+		return x / ActiveMap.getTileSet().getWidth();
 	}
+	public int RowAt(int x, int y)
+	{
+		return y / ActiveMap.getTileSet().getHeight();
+	}
+	
+
+
 
 	@Override
 	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
@@ -188,6 +161,52 @@ public class SquareMapViewer extends MapViewer implements ActionListener {
 	@Override
 	public Printable getPrintable(int pageIndex) throws IndexOutOfBoundsException {
 		return this;
+	}
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// do nothing
+		
+	}
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		//identify selected tile and report to action listener
+		int x=e.getX();
+		int y=e.getY();
+		this.selectedColumn=this.ColumnAt(x, y);
+		this.selectedRow=this.RowAt(x, y);
+		if (!Listeners.isEmpty())
+		{
+			ActionEvent e2=new ActionEvent(this,ActionEvent.ACTION_FIRST ,x+","+y);
+			for (ActionListener l:Listeners)
+			{
+				l.actionPerformed(e2);
+			}
+		}
+	}//end mouse pressed
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// do nothingb
+		
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// do nothing
+		
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// Tdo nothing
+		
 	}
 	
 }//end map viewer class

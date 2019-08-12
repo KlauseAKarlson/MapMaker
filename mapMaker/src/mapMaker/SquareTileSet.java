@@ -61,6 +61,9 @@ public class SquareTileSet extends TileSet{
 			BufferedImage rsImage=new BufferedImage(tileWidth, tileHeight, i.getType());
 			Graphics2D g2d = rsImage.createGraphics();
 			g2d.drawImage(i, 0, 0, tileWidth, tileHeight, null);
+			//draw border
+			g2d.setColor(Color.BLACK);
+			g2d.drawRect(0, 0,tileWidth-1, tileHeight-1);
 			g2d.dispose();
 			return rsImage;
 		}
@@ -77,7 +80,7 @@ public class SquareTileSet extends TileSet{
 		BufferedImage recoloredImage=new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
 		//create space for color data
 		int transparent=new Color(0,0,0,0).getRGB();
-		int target=rsImage.getRGB(0, 0);
+		int target=rsImage.getRGB(1, 1);
 		int pixel;//color of pixel extracted from rsImage
 		//iterate through pixels using x for width and y for height
 		for (int y=0; y<rsImage.getHeight(); y++)
