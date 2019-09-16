@@ -98,6 +98,55 @@ public abstract class Map {
 		return saveMap;
 	}//end load map
 	
+	public void importTileSet(String saveLocation) throws IOException
+	{
+		/**
+		 * imports the tile set from another map
+		 */
+		//evaluate and open file
+		if(!saveLocation.endsWith(".map"))//make sure the save file is a text file
+			throw new IOException("Wrong file format");
+		ZipFile save=new ZipFile(saveLocation);
+		/**
+		 * map description contains the map type in the first line,
+		 * map width and height on the second line
+		 * number of map layers on third line
+		 * tile width and height on fourth line
+		 * and a list of all tile names on the final line
+		 */
+		ZipEntry description=save.getEntry("save.txt");
+		BufferedReader saveReader=new BufferedReader(
+				new InputStreamReader(
+						save.getInputStream(description)));
+		//skip four lines
+		for (int i=0; i<4;i++)
+			saveReader.readLine();
+		//read tile list
+		LinkedList<String> tileNames=new LinkedList<String>();
+		String currentLine=saveReader.readLine();
+		int start=0;
+		int end=currentLine.indexOf(",");
+		while (end!=-1)//index of returns -1 if there are no matching characters
+		{
+			tileNames.add(currentLine.substring(start,end));
+			start=end+1;
+			end=currentLine.indexOf(",", start);
+		}//end while loop, will leave one more tile to be created
+		tileNames.add(currentLine.substring(start));
+		saveReader.close();
+		
+		BufferedImage tileImage;
+		ZipEntry tileSource;
+		TileSet tSet=this.getTileSet();
+		for (String tileName:tileNames)
+		{
+			tileSource=save.getEntry(tileName+".png");
+			tileImage=ImageIO.read(save.getInputStream(tileSource));
+			tileImage=tSet.resizeImage(tileImage);
+			tSet.createTile(tileName, tileImage);
+		}//end loop over tiles	
+	}//end import tile set
+	
 	private void loadTiles(ZipFile save, LinkedList<String> tileNames) throws IOException
 	{
 		BufferedImage tileImage;

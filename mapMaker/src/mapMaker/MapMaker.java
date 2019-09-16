@@ -41,7 +41,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 	private SpinnerNumberModel LayerChooser;
 	private Map ActiveMap;
 	private JButton BReplaceTile, BNewMap, BLoadSave, BSaveMap, BImportTile, BAddLayer, BRemoveLayer, 
-		BExportToImage, BPrint, BHelp;
+		BExportToImage, BPrint, BHelp, BImport;
 	private JCheckBox BAutoReplace;
 	private NewMapDialog DNewMap;
 	private CreateTileDialog DCreateTile;
@@ -71,6 +71,10 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		BImportTile.addActionListener(this);
 		fileBox.add(BImportTile);
 		
+		BImport=new JButton("Import Tile Set");
+		BImport.addActionListener(this);
+		fileBox.add(BImport);
+		
 		BExportToImage=new JButton("Export Map to Image");
 		BExportToImage.addActionListener(this);
 		fileBox.add(BExportToImage);
@@ -82,11 +86,12 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		BHelp = new JButton("Help");
 		BHelp.addActionListener(this);
 		fileBox.add(BHelp);
-		
+			
 		this.add(fileBox, BorderLayout.NORTH);
 		
-		//create sidepanel wtih map editing tools
+		//create side panel with map editing tools
 		createSidePanel();
+		
 		//create map viewer and put it in a scroll panel
 		ActiveViewer=ActiveMap.getMapViewer();
 		ActiveViewer.addActionListener(this);
@@ -96,6 +101,7 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		scrlPn.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scrlPn.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.add(scrlPn);
+		
 		//finish creating JFrame
 		DNewMap=new NewMapDialog();
 		DNewMap.addActionListener(this);
@@ -286,6 +292,9 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		}else if(source ==BHelp)
 		{
 			help();
+		}else if(source ==BImport)
+		{
+			ImportTileSet();
 		}
 	}//end actionPerformed(e)
 	public void loadSave()
@@ -415,6 +424,28 @@ public class MapMaker extends JFrame implements ChangeListener, ActionListener{
 		JOptionPane.showMessageDialog(this, helpMessage, "Controls", JOptionPane.PLAIN_MESSAGE);
 	}
 	
+	public void ImportTileSet()
+	{
+		/**
+		 * give user load save option
+		 */
+		JFileChooser chooser = new JFileChooser();
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Map Maker Map",
+	            "map");
+	    chooser.setFileFilter(filter);
+	    int returnValue=chooser.showOpenDialog(this);
+	    if (returnValue==JFileChooser.APPROVE_OPTION)
+	    {
+	    	File save=chooser.getSelectedFile();
+	    	try {
+				ActiveMap.importTileSet(save.getAbsolutePath());
+				this.TSetMenu.updateTiles();
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, e.getMessage(), "File Exception", JOptionPane.ERROR_MESSAGE);
+			}
+	    }
+	}//end import tile set
 	
 	public static void main(String[] args) {
 		new MapMaker(new SquareMap(5,5));
